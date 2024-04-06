@@ -1,0 +1,402 @@
+[
+    {
+      "key": "A",
+      "virtualkey": 2147483713
+    },
+    {
+      "key": "B",
+      "virtualkey": 2147483714
+    },
+    {
+      "key": "C",
+      "virtualkey": 2147483715
+    },
+    {
+      "key": "D",
+      "virtualkey": 2147483716
+    },
+    {
+      "key": "E",
+      "virtualkey": 2147483717
+    },
+    {
+      "key": "F",
+      "virtualkey": 2147483718
+    },
+    {
+      "key": "G",
+      "virtualkey": 2147483719
+    },
+    {
+      "key": "H",
+      "virtualkey": 2147483720
+    },
+    {
+      "key": "I",
+      "virtualkey": 2147483721
+    },
+    {
+      "key": "J",
+      "virtualkey": 2147483722
+    },
+    {
+      "key": "K",
+      "virtualkey": 2147483723
+    },
+    {
+      "key": "L",
+      "virtualkey": 2147483724
+    },
+    {
+      "key": "M",
+      "virtualkey": 2147483725
+    },
+    {
+      "key": "N",
+      "virtualkey": 2147483726
+    },
+    {
+      "key": "O",
+      "virtualkey": 2147483727
+    },
+    {
+      "key": "P",
+      "virtualkey": 2147483728
+    },
+    {
+      "key": "Q",
+      "virtualkey": 2147483729
+    },
+    {
+      "key": "R",
+      "virtualkey": 2147483730
+    },
+    {
+      "key": "S",
+      "virtualkey": 2147483731
+    },
+    {
+      "key": "T",
+      "virtualkey": 2147483732
+    },
+    {
+      "key": "U",
+      "virtualkey": 2147483733
+    },
+    {
+      "key": "V",
+      "virtualkey": 2147483734
+    },
+    {
+      "key": "W",
+      "virtualkey": 2147483735
+    },
+    {
+      "key": "X",
+      "virtualkey": 2147483736
+    },
+    {
+      "key": "Y",
+      "virtualkey": 2147483737
+    },
+    {
+      "key": "Z",
+      "virtualkey": 2147483738
+    },
+    {
+      "key": 0,
+      "virtualkey": 2147483696
+    },
+    {
+      "key": 1,
+      "virtualkey": 2147483697
+    },
+    {
+      "key": 2,
+      "virtualkey": 2147483698
+    },
+    {
+      "key": 3,
+      "virtualkey": 2147483699
+    },
+    {
+      "key": 4,
+      "virtualkey": 2147483700
+    },
+    {
+      "key": 5,
+      "virtualkey": 2147483701
+    },
+    {
+      "key": 6,
+      "virtualkey": 2147483702
+    },
+    {
+      "key": 7,
+      "virtualkey": 2147483703
+    },
+    {
+      "key": 8,
+      "virtualkey": 2147483704
+    },
+    {
+      "key": 9,
+      "virtualkey": 2147483705
+    },
+    {
+      "key": "=",
+      "virtualkey": 2147483709
+    },
+    {
+      "key": "`",
+      "virtualkey": 2147483744
+    },
+    {
+      "key": ";",
+      "virtualkey": 2147483707
+    },
+    {
+      "key": "'",
+      "virtualkey": 2147483687
+    },
+    {
+      "key": "[",
+      "virtualkey": 2147483739
+    },
+    {
+      "key": "]",
+      "virtualkey": 2147483741
+    },
+    {
+      "key": "\\",
+      "virtualkey": 2147483740
+    },
+    {
+      "key": ",",
+      "virtualkey": 2147483692
+    },
+    {
+      "key": "-",
+      "virtualkey": 2147483693
+    },
+    {
+      "key": ".",
+      "virtualkey": 2147483694
+    },
+    {
+      "key": "/",
+      "virtualkey": 2147483695
+    },
+    {
+      "key": "{Left}",
+      "virtualkey": 42
+    },
+    {
+      "key": "{Right}",
+      "virtualkey": 43
+    },
+    {
+      "key": "{Up}",
+      "virtualkey": 44
+    },
+    {
+      "key": "{Down}",
+      "virtualkey": 45
+    },
+    {
+      "key": "{Home}",
+      "virtualkey": 36
+    },
+    {
+      "key": "{End}",
+      "virtualkey": 37
+    },
+    {
+      "key": "{PgUp}",
+      "virtualkey": 38
+    },
+    {
+      "key": "{PgDown}",
+      "virtualkey": 39
+    },
+    {
+      "key": "{Space}",
+      "virtualkey": 1
+    },
+    {
+      "key": "{Tab}",
+      "virtualkey": 3
+    },
+    {
+      "key": "{Delete}",
+      "virtualkey": 35
+    },
+    {
+      "key": "{Backspace}",
+      "virtualkey": 2
+    },
+    {
+      "key": "{Enter}",
+      "virtualkey": 4
+    },
+    {
+      "key": "{Numpad0}",
+      "virtualkey": 3221225520
+    },
+    {
+      "key": "{Numpad1}",
+      "virtualkey": 3221225521
+    },
+    {
+      "key": "{Numpad2}",
+      "virtualkey": 3221225522
+    },
+    {
+      "key": "{Numpad3}",
+      "virtualkey": 3221225523
+    },
+    {
+      "key": "{Numpad4}",
+      "virtualkey": 3221225524
+    },
+    {
+      "key": "{Numpad5}",
+      "virtualkey": 3221225525
+    },
+    {
+      "key": "{Numpad6}",
+      "virtualkey": 3221225526
+    },
+    {
+      "key": "{Numpad7}",
+      "virtualkey": 3221225527
+    },
+    {
+      "key": "{Numpad8}",
+      "virtualkey": 3221225528
+    },
+    {
+      "key": "{Numpad9}",
+      "virtualkey": 3221225529
+    },
+    {
+      "key": "{NumpadDot}",
+      "virtualkey": 3221225518
+    },
+    {
+      "key": "{NumpadEnter}",
+      "virtualkey": 5
+    },
+    {
+      "key": "{NumpadMult}",
+      "virtualkey": 3221225514
+    },
+    {
+      "key": "{NumpadDiv}",
+      "virtualkey": 3221225519
+    },
+    {
+      "key": "{NumpadAdd}",
+      "virtualkey": 3221225515
+    },
+    {
+      "key": "{NumpadSub}",
+      "virtualkey": 3221225517
+    },
+    {
+      "key": "{F1}",
+      "virtualkey": 7
+    },
+    {
+      "key": "{F2}",
+      "virtualkey": 8
+    },
+    {
+      "key": "{F3}",
+      "virtualkey": 9
+    },
+    {
+      "key": "{F4}",
+      "virtualkey": 10
+    },
+    {
+      "key": "{F5}",
+      "virtualkey": 11
+    },
+    {
+      "key": "{F6}",
+      "virtualkey": 12
+    },
+    {
+      "key": "{F7}",
+      "virtualkey": 13
+    },
+    {
+      "key": "{F8}",
+      "virtualkey": 14
+    },
+    {
+      "key": "{F9}",
+      "virtualkey": 15
+    },
+    {
+      "key": "{F10}",
+      "virtualkey": 16
+    },
+    {
+      "key": "{F11}",
+      "virtualkey": 17
+    },
+    {
+      "key": "{F12}",
+      "virtualkey": 18
+    },
+    {
+      "key": "{F13}",
+      "virtualkey": 19
+    },
+    {
+      "key": "{F14}",
+      "virtualkey": 20
+    },
+    {
+      "key": "{F15}",
+      "virtualkey": 21
+    },
+    {
+      "key": "{F16}",
+      "virtualkey": 22
+    },
+    {
+      "key": "{F17}",
+      "virtualkey": 23
+    },
+    {
+      "key": "{F18}",
+      "virtualkey": 24
+    },
+    {
+      "key": "{F19}",
+      "virtualkey": 25
+    },
+    {
+      "key": "{F20}",
+      "virtualkey": 26
+    },
+    {
+      "key": "{F21}",
+      "virtualkey": 27
+    },
+    {
+      "key": "{F22}",
+      "virtualkey": 28
+    },
+    {
+      "key": "{F23}",
+      "virtualkey": 29
+    },
+    {
+      "key": "{F24}",
+      "virtualkey": 30
+    }
+  ]
