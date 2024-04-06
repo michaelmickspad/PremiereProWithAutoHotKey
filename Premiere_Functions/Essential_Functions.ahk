@@ -17,7 +17,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
  */
 
 ; Global Variables
-global CONFIG_FILEPATH := "PremiereWithAHKConfig.ini"
+global CONFIG_FILEPATH := "%A_WorkingDir%\..\config\PremiereWithAHKConfig.ini"
 global POPULATED_ESSENTIAL_GLOBALS := False
 global DISPLAY_SCALING_VALUE := -1
 
