@@ -44,7 +44,8 @@ If you want an idea of how these functions are used in practice, check out his o
     * If you hate yourself and absolutely REFUSE to use Python
         * Use the DEFAULT_CONFIG_TEMPLATE.ini file as a way to manually type out each of your keyboard shortcuts for each of your premiere commands (Don't actually do this)
 
-* Once you have your config file, ____(Are we building a GUI for function creation or not?)
+* Once you have your config file, create your own Hotkeys in UserHotKeys.ahk
+ADD MORE LATER
 
 ### Executing Program
 
