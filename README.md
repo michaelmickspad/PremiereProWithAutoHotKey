@@ -6,7 +6,7 @@ README is incomplete, will remove this message when there is a functional versio
 
 This is my own version of the Premiere Pro editing help scripts originally created by Taran Van Hemert. He is a fantastic video editor, but his code is... he's a great video editor.
 
-Many of his implementations are perfectly fine and functional, but to the average user (or even many power users), sifting through a large amount of code that was primarily written for one person's specific setup can be difficult, and making an easier to use an configure version of what Taran had built is what this project aims to achieve.
+Many of his implementations are perfectly fine and functional, but to the average user (or even many power users), sifting through a large amount of code that was primarily written for one person's specific setup can be difficult, and making an easier to use and configure version of what Taran had built is what this project aims to achieve.
 
 The aim of this project is to allow easier automation of certain tasks within the video editing process when using Premiere Pro for people who aren't as willing to deal with manually editing code by including ways to instantly and much more easily configure the automation scripts to work based on the user's specific setup, such as uploading a keybinding file or giving the ability to set hotkeys for presets from a gui rather than directly writing the code.
 
