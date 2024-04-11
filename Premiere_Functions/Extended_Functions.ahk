@@ -6,9 +6,6 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #MaxHotkeysPerInterval, 2000
 #WinActivateForce
 
-; Required External Scripts
-#Include %A_ScriptDir%\Essential_Functions.ahk
-
 /*
  * DESCRIPTION:
  *

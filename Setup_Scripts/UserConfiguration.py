@@ -9,18 +9,15 @@ from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 import os
 import sys
+import ConfigBuilder
+import ctypes
 
 def AskUserQuestions():
     '''
     Main form where the questions are answered
     '''
     # Values determined through questioning
-    #TODO: Switch the single variables to the userAnswers dictionary
-    userAnswers = {} # Currently Unused
-
-    firstTimeSetup = True
-    displayScaling = -1
-    premiereKeyfile = ''
+    userAnswers = {}
 
     msg = 'Welcome to the Premiere Pro AutoHotKey Automation Tool Configurator\n' \
         + 'This project was built by Michael Mickspad with heavy inspiration and code ' \
@@ -28,29 +25,41 @@ def AskUserQuestions():
     print(msg)
 
     prompt = 'Is this your first time running this configurator on this computer? (Y/N): '
-    firstTimeSetup = PromptUserBoolean(prompt)
+    userAnswers['First Time Setup'] = PromptUserBoolean(prompt)
 
-    prompt = 'Please Enter your Windows Display Scaling Value: '
-    badOptionMsg = '\nUnfortunately this script only works for values of 100% and 150% ' \
-                 + 'resolution scaling,\nfuture additions may change this, but for ' \
-                 + 'now, please adjust your resolution scaling\nif you wish to run ' \
-                 + 'this tool.' \
-                 + '\nPRESS CTRL+"C" OR CLOSE THIS WINDOW TO EXIT'
-    displayScaling = PromptUserInt(prompt)
+    # I don't know what ctypes is completely, but this line accurately grabs the display
+    # scaling of the main monitor
+    displayScaling = ctypes.windll.shcore.GetScaleFactorForDevice(0)
+    badDisplayMsg = '\nUnfortunately this script only works for values of 100% and 150%' \
+                  + ' resolution scaling,\nfuture additions may change this, but for' \
+                  + ' now, please adjust your resolution scaling\nif you wish to run' \
+                  + ' this tool.\n'
     if displayScaling not in [100, 150]:
-        print(badOptionMsg)
-        input()
-        sys.exit(1)
+        print(badDisplayMsg)
+
+    prompt = 'Your current windows scaling is detected as {}%. '.format(displayScaling) \
+           + 'Is this correct? (Y/N): '
+    correctScaling = PromptUserBoolean(prompt)
+    if not correctScaling:
+        prompt = 'Please Enter your Windows Display Scaling Value: '
+        badOptionMsg = '\nPRESS CTRL+"C" OR CLOSE THIS WINDOW TO EXIT'
+        displayScaling = PromptUserInt(prompt)
+        if displayScaling not in [100, 150]:
+            print(badDisplayMsg)
+            print(badOptionMsg)
+            input()
+            sys.exit(1)
+    userAnswers['Display Scaling'] = displayScaling
+
 
     prompt = 'Please specify your Premiere keyboard shortcuts\n' \
            + 'This is generally stored in your Documents folder under\n' \
            + '"Adobe" > "Premiere Pro" > "[VERSION]" > "Profile-[USERNAME]" > "Win"\n' \
            + 'but this can be different based on if you are using the Creative Cloud.\n' \
            + 'The file will have a .kys extension\n'
-    premiereKeyfile = PromptUserFileUpload(prompt, 'kys')
+    userAnswers['Premiere Keyfile'] = PromptUserFileUpload(prompt, 'kys')
 
-    return firstTimeSetup, displayScaling, premiereKeyfile
-
+    return userAnswers
 
 
 def PromptUserBoolean(prompt):
@@ -113,7 +122,8 @@ def PromptUserFileUpload(prompt, expectedFileExtension):
     will have to be done outside of this function
     '''
     print() # Better formatting
-    invalidMsg = '\nInvalid File Selected, file must have a \".{}\" extension\n'.format(expectedFileExtension)
+    invalidMsg = '\nInvalid File Selected, file must have a ' \
+               + '\".{}\" extension\n'.format(expectedFileExtension)
     queryAnswered = False
     lastAnswerBad = False
     print(prompt)
@@ -133,38 +143,35 @@ def PromptUserFileUpload(prompt, expectedFileExtension):
     return fileSelected
 
 
-def BuildConfig(windowsConfigs, premiereKeyFileIn):
+def BuildConfig(configOptionsIn):
     '''
     Calls the setup script to build the AHK Configuration file using the information
     collected from the user.
-
-    This function SUCKS, use if for now but just find a better way to do this later
     '''
+    configInputArgs = []
+    configInputArgs.append(configOptionsIn['Premiere Keyfile'])
+    # The key and value need to be separate
+    configInputArgs.append('--displayScaling')
+    configInputArgs.append('{}'.format(configOptionsIn['Display Scaling'])) # Stringify
 
-    setupScript = os.path.abspath(__file__)
-    setupScript = os.path.dirname(setupScript)
-    setupScript = os.path.join(setupScript, 'ConfigBuilder.py') # File name subject to change
-
-    pythonPath = sys.executable
-
-    runCommand = '{} "{}" "{}"'.format(pythonPath, setupScript, premiereKeyFileIn)
-    runCommand += ' --displayScaling {}'.format(windowsConfigs['display scaling'])
-
-    retCode = os.system(runCommand)
+    try:
+        retCode = ConfigBuilder.Main(configInputArgs)
+    except Exception:
+        retCode = 1
+    
     if retCode == 0:
         print('You should now see a shiny new config file in your output directory')
     else:
-        print(premiereKeyFileIn)
-        print('What the hell happened?')
-    
-    return retCode
+        print('There was an error with parsing the following file:\n')
+        print(configOptionsIn['Premiere Keyfile'])
+        print('Please check to ensure the .kys file is a valid Premiere Pro key file')
+
 
 # Main Function
 if __name__ == '__main__':
 
-    windowsConfigs = {}
-    _, windowsConfigs['display scaling'], premiereKeyfile = AskUserQuestions()
-    BuildConfig(windowsConfigs, premiereKeyfile)
+    configOptions = AskUserQuestions()
+    BuildConfig(configOptions)
 
     input("\nPress ENTER To Close...")
     sys.exit(0)

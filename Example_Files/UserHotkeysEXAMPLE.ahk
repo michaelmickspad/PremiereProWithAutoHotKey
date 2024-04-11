@@ -23,3 +23,4 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
  * by using that script and only use this file to add your own hotkeys and functions.
  */
 
+;TODO: Add some example hotkeys in here once the GUI is up and running

@@ -1,10 +1,10 @@
 # Premiere Pro with AutoHotKey
 
-README is incomplete, will remove this message when there is a functional version of the project available on github, in its current state, the repo is still being set up
+# THIS PROJECT IS CURRENTLY IN A PRE-ALPHA NON-VIABLE STATE!  PLEASE COME BACK LATER! THIS MESSAGE WILL BE REMOVED WHEN THERE IS A USABLE VERSION OF THE PROJECT
 
 ## Overview (Please Read)
 
-This is my own version of the Premiere Pro editing help scripts originally created by Taran Van Hemert. He is a fantastic video editor, but his code is... he's a great video editor.
+This is my own version of the Premiere Pro editing help scripts originally created by Taran Van Hemert.
 
 Many of his implementations are perfectly fine and functional, but to the average user (or even many power users), sifting through a large amount of code that was primarily written for one person's specific setup can be difficult, and making an easier to use and configure version of what Taran had built is what this project aims to achieve.
 
@@ -25,38 +25,37 @@ If you want an idea of how these functions are used in practice, check out his o
 
 ## Getting Started
 
-### Dependencies
+### Required Dependencies
 
 * Adobe Premiere Pro on either Windows 10 or Windows 11
 * [AutoHotKey](https://www.autohotkey.com/download/) (Scripts are built on AHK v1.1)
-* Python (Anaconda is recommended)
-    * I plan on making  this optional eventually by providing a standalone .exe file, but for the time being, it only works when you have Python installed
 
-### Installing
+### Optional Dependencies
+* Python
+    * This is optional because all of the scripts are available for you to run, but the executable is being offered as an alternative if you don't wish to install Python
+    * THE EXECUTABLE IS CURRENTLY NOT AVAILABLE YET, THE SCRIPTS ARE REQUIRED, BUT WORK IS BEING DONE TO PROVIDE AN EXECUTABLE
+
+### How to Run This Program
 
 * Create your configuration file
-    * If you are a developer and want to be developer-y:
-        * On the command line, run "InitialSetup.py" and follow the proper input arguments to create your config file
-    * If you are not a developer or just want an easy setup:
-        * Run "UserConfiguration.py" and follow the on screen instructions to build your config file
-        * At the current moment, this exists solely as a script, so you need python installed to run it, but running it only required double clicking on it in the file browser. I do plan on providing a standalone executable at some point in the future, but that point is not now, so sorry but please install Python and run the script.
-        * This will automatically run "InitialSetup.py" after answering the specific questions, so don't worry about running the setup script afterwards
-    * If you hate yourself and absolutely REFUSE to use Python
-        * Use the DEFAULT_CONFIG_TEMPLATE.ini file as a way to manually type out each of your keyboard shortcuts for each of your premiere commands (Don't actually do this)
+    * Ensure that Python is installed on your computer (This step will become optional when an executable can be provided)
+    * (If not using executable and Python is installed) From the "Setup_Scripts" folder Run "UserConfiguration.py" and follow the on screen instructions to build your config file
+        * Do not worry about running any of the other scripts in that folder, many of them are boilerplate for future items to implement, and others will be called by the "UserConfiguration.py" script
+    * (If using executable) Run "Setup.exe" and follow the on screen instructions to build your config file
+    * Once you run through the questions, you should see the file "PremiereWithAHKConfig.ini" appear inside the "config" folder
+        * Do not worry about any of the other files in this folder, many of them are placeholders for future ideas I want to implement
+        * If you have ever looked at a .kys file and were curious what the numbers in them corresponded to, "virtualkeys.json" has that information if you are a video editor who has had issues you need to manually adjust within the .kys file
 
-* Once you have your config file, create your own Hotkeys in UserHotKeys.ahk
-ADD MORE LATER
+* Once you have your config file, Start creating your hotkeys in "UserHotkeys.ahk"
+    * Check the section below on Setting Hotkeys for more information on this step
+    * There is one hotkey already set in "PremiereProWithAutoHotKey.ahk" which is CTRL + ` (The key to the left of the "1" key on the keyboard), and it's set to close this program. If you would like to remove or change this, please update or remove it from "PremiereProWithAutoHotKey.ahk". It technically doesn't need to be there as you can also close the program by right clicking the icon in the bottom right and closing it from there, but I don't feel comfortable shipping this code without an emergency close hotkey.
 
-### Executing Program
+* Once you have your hotkeys set up, double click on "PremiereProWithAutoHotKey.ahk" to run the program
+    * You can also create a shortcut to that script and place it anywhere (I highly recommend you do this because removing that script from it's place in the folders will break the program)
 
-* How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
 
-## Functions Overview
-When building out your own uses in "____.ahk" using the template, you can call a variety of functions
+## Setting Hotkeys Overview
+When building out your own hotkeys in "UserHotkeys.ahk", you can call a variety of functions to do automated tasks in Premiere
 
 To call one of these functions, use the following syntax:
 ```autohotkey
@@ -65,7 +64,7 @@ INSERT_HOTKEY_HERE::
     FUNCTION_NAME(FUNCTION_PARAMETERS)
 Return
 ```
-For an actual example, this hotkey is activated with "CTRL + j" and adds an effect called "shakeScreen20" to the clip
+For an actual example, this hotkey is activated with "CTRL + j" and adds an effect called "shakeScreen20" to the clip below the cursor
 
 ```autohotkey
 ^j::
@@ -73,58 +72,87 @@ For an actual example, this hotkey is activated with "CTRL + j" and adds an effe
     preset("shakeScreen20")
 Return
 ```
-You can use "UserHotkeysExample.ahk" if you want a more thorough idea for how I set up mine
+
+When making the hotkeys it is important to note the modifier keys:
+- ^ means CTRL
+- \+ means SHIFT
+- !  means ALT
+
+And when using keys that are not the standard alphanumeric keys (such as the numpad, arrow keys, function keys, etc.) you need to use specific names to use them and surround that name with these brackets: { }
+
+A list of these keys can be found [here.](https://www.autohotkey.com/docs/v1/KeyList.htm)
+
+If you want a more thorough idea of how to set up your hotkeys, check the file "UserHotkeysEXAMPLE.ahk" in the Example Files folder.
 
 ## Essential Functions
 The following is a list of functions and exaplanations for what they do that are contained in the Essential_Functions.ahk script
 
-- preset("EFFECT_NAME")
-    - Adds a custom effect to the clip your mouse is hovering over
-    - The effect you want to use MUST be in an effects folder, whether official or one you make doesn't really matter, but you cannot have a custom effect outside of a folder or else the mouse will not line up properly
+* preset("EFFECT_NAME")
+    * Adds a custom effect to the clip your mouse is hovering over
+    * The effect you want to use MUST be in an effects folder, whether official or one you make doesn't really matter, but you cannot have a custom effect outside of a folder or else the mouse will not line up properly
 
-- prFocus("PANEL_NAME")
-    - Brings a specific panel into focus
-    - You options for the panel name are as follows:
-        - "timeline"
-        - "effects"
-        - "effect controls"
-        - "program"
-            - Program Monitor
-        - "source"
-            - Source Monitor
-        - "project"
-            - Opens the primary bin for your active project
+* prFocus("PANEL_NAME")
+    * Brings a specific panel into focus
+    * You options for the panel name are as follows:
+        * "timeline"
+        * "effects"
+        * "effect controls"
+        * "program"
+            * Program Monitor
+        * "source"
+            * Source Monitor
+        * "project"
+            * Opens the primary bin for your active project
 
-- searchForEffect("EFFECT_NAME")
-    - Opens the search box and looks for the specified effect name
-    - Since preset() already does this AND adds the effect to your clip, I would recommend using this in situations where you may have multiple functions like "CROP20", "CROP30", "CROP40", etc. and you set a hotkey to search "CROP" to get all of them easily rather than to look for one specific effect, but that's up to you
+* searchForEffect("EFFECT_NAME")
+    * Opens the search box and looks for the specified effect name
+    * Since preset() already does this AND adds the effect to your clip, I would recommend using this in situations where you may have multiple functions like "CROP20", "CROP30", "CROP40", etc. and you set a hotkey to search "CROP" to get all of them easily rather than to look for one specific effect, but that's up to you
 
-- effectsPanelFindBox()
-    - Opens the effects panel and places your cursor inide the search box, allowing you to type in the box instantly
+* effectsPanelFindBox()
+    * Opens the effects panel and places your cursor inide the search box, allowing you to type in the box instantly
 
-- marker()
-    - Stops playing any video and places a marker at the playhead
-    - While Premiere technically already has a keyboard shortcut for this, this is more reliable since it forces a stop on the timeline
-
-- INSERT_NEXT_FUNCTION HERE
+* marker()
+    * Stops playing any video and places a marker at the playhead
+    * While Premiere technically already has a keyboard shortcut for this, this is more reliable since it forces a stop on the timeline
 
 ## Audio Functions
 The following is a list of functions and exaplanations for what they do that are contained in the Audio_Functions.ahk script
 
-(If you have no use for any of these, do not include this script in UserHotkeys.ahk)
+* addGain(AMOUNT)
+    * Adds gain to whatever audio clip is currently selected, input must be an integer value
 
-- INSERT_NEXT_FUNCTION HERE
+* insertSFX("SOUND_EFFECT_NAME")
+    * CURRENTLY UNFINISHED, DO NOT USE
+    * Inserts the specified sound effect to the timeline
+
+* audioMonoMaker("TRACK")
+    * CURRENTLY UNFINISHED, DO NOT USE
+    * Converts the selected audio clip to Mono
+    * Input for track must be "right" or "left", not specifying will default to the left Audio Track
 
 ## Extended Functions
 The following is a list of functions and exaplanations for what they do that are contained in the Extended_Functions.ahk script
 
-(If you have no use for any of these, do not include this script in UserHotkeys.ahk)
+In order to use the extended functions, additional setup is required to be performed, as of right now, these are a not high priority to fix, but they will be implemented down the line.
 
-- INSERT_NEXT_FUNCTION HERE
+* instantVFX("EFFECT_NAME")
+    * CURRENTLY UNFINISHED, DO NOT USE
 
-## Help
+* clickTransformIcon()
+    * CURRENTLY UNFINISHED, DO NOT USE
 
-THIS SECTION WILL BE ADDED LATER
+* cropClick()
+    * CURRENTLY UNFINISHED, DO NOT USE
+
+## Taran Functions
+The Taran_Functions.ahk script contains functions from Taran's original scripts that I wanted to keep included in case anyone got specific use out of them, but as of right now, they are low priority to implement, and if I decide to implement any of them, they will likely move to one of the other scripts.
+
+I would only recommend looking deeper into these functions if you have previous familiarity with AutoHotKey and Premiere, I have done minor formatting adjustments on the functions, but not much work beyond that.
+
+## How Do I Update?
+I'm going to be honest with you here, chief... I am learning as I'm going, so updates are going to be a baby bit messy until I learn how to fully deal with them.
+
+The best thing to do if you want the newest version of this project when updates are made is to redownload the code, and copy anything from your old version's config folder into the new one. I'm going to try my best to eventually make a way to just hit a button and update the program and keep all of your changes, but for the time being, "hold onto your config files" is genuinely the best advice I can give. This is meant to help you edit videos easier, but it's also a project being done in my spare time by a person who's only ever contributed to other projects, never headed their own before.
 
 ## Authors
 
@@ -137,15 +165,20 @@ THIS SECTION WILL BE ADDED LATER
 
 * Version 0.1
     - Initial release
+    - Included basic scripts for creating your configuration file from a premiere pro .kys file
+    - Included functionality for preset() and associated other functions
+    - Wrote the README
+    - Included placeholders for future ideas regarding GUI and automated hotkey generation
+    - Included executable for the initial version of the setup process
 
 ## License
 
 Yes.
 
 ## List of Issues That Irked Me With Taran's Code And Caused Me To Make This Project
-Taran, if you're reading this, I'm sorry... I know you are a video editor and not a coder, but these things were issues that made the code so much more diffult to parse and included some very problematic practices
+Taran, if you're reading this, I am genuinely sorry... I know you are a video editor and not a coder, but these things were issues that made the code so much more diffult to parse and included some very problematic practices
 
-- Use of whitespace tabs instead of multiple spaces (terrible for formatting and adjustability, and options exist to replace your tab button in coding text editors with multiple spaces)
+- Use of tabs instead of multiple spaces
 - Use of "goto"
 - Use of "goto" to jump to a line specified by single line function call
 - Use of "goto" to jump to end a function instead of stopping function with "Return"
@@ -175,4 +208,7 @@ In conclusion: See me after class, young man.
 
 ## Acknowledgments
 
-THIS SECTION WILL BE ADDED LATER
+I know it's ironic to put this section immediately after dunking on his code, but seriously, this project would not have been possible without the amazing work done by Taran Van Hemert with his original scripts which were the basis for this entire project.
+
+I also would like to thank the following people for being willing to help me through testing the functionality:
+* INSERT_NAME_HERE_WHEN_TESTING_BEGINS (Hopefully Liz)

@@ -1,6 +1,9 @@
 '''
 Description:
-__
+Builds the configuration file for the AutoHotKey scripts as well as parses the
+Premiere keybinding file into a form that is understandable by AutoHotKey
+
+NOTE: This script is imported by other scripts
 '''
 
 import argparse
@@ -34,6 +37,11 @@ def ParseArguments(inputArguments=None):
         help = 'Specify the display scaling option in Windows. Default is 100',
         default = 100
     )
+    parser.add_argument(
+        '--debug',
+        action = 'store_true',
+        help = 'Output debug information to the terminal'
+    )
     
     try:
         if inputArguments:
@@ -47,10 +55,11 @@ def ParseArguments(inputArguments=None):
 
     return arguments
 
-def BuildIniFile(keybindDictionary, sectionNameIn, iniFilePath, freshStart=False):
+def BuildIniFile(settingDict, sectionNameIn, iniFilePath, freshStart=False):
     '''
-    Builds the .ini file from the parsed Premiere keybindings so that AutoHotKey can
-    use the values as global variables
+    Builds the .ini file from the given input values (most prominently the parsed Premiere
+    keybindings) so that AutoHotKey can use the values as global variables for keybaord
+    inputs
 
     freshStart means that we need to remove whatever was in that section before,
     otherwise we append the sections
@@ -64,16 +73,16 @@ def BuildIniFile(keybindDictionary, sectionNameIn, iniFilePath, freshStart=False
     if not ahkConfig.has_section(sectionNameIn):
         ahkConfig.add_section(sectionNameIn)
 
-    for keybind in keybindDictionary:
+    for settingKey in settingDict:
         # Format is used to stringify any number values
-        keybindValue = '{}'.format(keybindDictionary[keybind])
-        ahkConfig.set(sectionNameIn, keybind, keybindValue)
+        settingVal = '{}'.format(settingDict[settingKey])
+        ahkConfig.set(sectionNameIn, settingKey, settingVal)
     
     # Write the .ini configuration file
     with open(iniFilePath, 'w') as configFile:
         ahkConfig.write(configFile)
 
-def ParseKeybindsFromKysFile(kysFileIn):
+def ParseKeybindsFromKysFile(kysFileIn, debugging = False):
     '''
     Takes the input of a .kys file exported from Premiere after setting keybindings
     and builds a dictionary of values to that will later be used to build the config
@@ -84,11 +93,10 @@ def ParseKeybindsFromKysFile(kysFileIn):
         Return Code
         Keyboard Shortcut Dictionary
     '''
-
     keybindDictionary = {}
 
     # Load the data for how Premiere stores keybindings
-    virtualKeys = GetVirtualKeys()
+    virtualKeys = GetVirtualKeys(debugging)
 
     if not kysFileIn.endswith('.kys'):
         print('ERROR: File must be a .kys file exported from Premiere Pro')
@@ -103,8 +111,8 @@ def ParseKeybindsFromKysFile(kysFileIn):
     contextBranches = [x for x in contextBranches if 'context' in x.tag]
     # This is probably stupid, but I've never done XML parsing before so cut me some slack
     # This is only meant to run whenever you change your keybinds in premiere, so... not
-    # a ton of times after initial setup, if I cared about efficiency, I wouldn't be 
-    # using Python for this, it's FINE
+    # a ton of times after initial setup, if I *really* cared about efficiency, I wouldn't
+    # be using Python for this, it's FINE
     itemList = []
     for contextBranch in contextBranches:
         # Find all of the actual keybaord shortcuts from the context branch
@@ -123,6 +131,9 @@ def AddParsedKeybindToDictionary(keybindElement, keybindDictionaryIn, virtualKey
     Parses the found keybind element from the .kys file and parses it into a command
     that AutoHotKey uses before putting the command into the keybindDictionary to
     later build the configuration file
+
+    Also adds the keybind to the file userPremiereKeybinds.json so later when the user
+    is specifying their hotkeys for the script, they can be warned of overlap
 
     Return Values:
         Keyboard Shortcut Dictionary (Reference)
@@ -169,7 +180,15 @@ def AddParsedKeybindToDictionary(keybindElement, keybindDictionaryIn, virtualKey
 
     return keybindDictionaryIn
 
-def GetVirtualKeys():
+def SaveUserPremiereKeybind(keybind):
+    '''
+    Saves the specified keybind to the file userPremiereKeybinds.json so later when the
+    user is specifying their hotkeys for the script, they can be warned of overlap
+    '''
+    # TODO: Implement this (or cut it entirely)
+    return 0
+
+def GetVirtualKeys(debugging):
     '''
     Turns the stored JSON file into an dictionary that's easier to work with in Python
 
@@ -179,17 +198,21 @@ def GetVirtualKeys():
 
     "But why are you using JSON when you can just store the python dictionary in plain
     text and use pickle to save and load it?" Because JSON is more widely used and I've
-    seen multiple forum posts of people asking "is there a list of what each virtualkey
+    seen multiple forum posts of people asking "Is there a list of what each virtualkey
     corresponds to?" while working on this project and now we have one... also I didn't
     think about using pickle until it was already built in JSON and I'm not redoing it.
     '''
-
     # Get the stored JSON file
     jsonFile = os.path.abspath(__file__)
-    jsonFile = os.path.dirname(jsonFile)
+    jsonFile = os.path.dirname(jsonFile) # Setup_Scripts
     jsonFile = os.path.dirname(jsonFile) # PremiereProWithAutoHotKey
     jsonFile = os.path.join(jsonFile, 'config')
     jsonFile = os.path.join(jsonFile, 'virtualkeys.json')
+
+    if debugging:
+        print('VirtualKeys JSON File: {}'.format(jsonFile))
+        print('File Exists: {}'.format(os.path.exists(jsonFile)))
+        print() # Empty line for formatting
 
     # Put the data from the JSON file into a dictionary
     virtualKeys = {}
@@ -204,10 +227,16 @@ def GetVirtualKeys():
 
     return virtualKeys
 
-# Main Function
-if __name__ == '__main__':
-    
-    args = ParseArguments()
+def Main(inputArgs):
+    '''
+    I hate this so much because I don't like making a main() function when 
+    if __name__ == '__main__'
+    exists, but in this case, I need to make it because it's being imported by other
+    scripts and being run as a standalone function
+    '''
+    args = ParseArguments(inputArgs)
+    if args.debug:
+        print('DEBUGGING IS ACTIVE')
 
     # Determine the location of the configuration file
     configFilePath = os.path.abspath(__file__)
@@ -222,7 +251,7 @@ if __name__ == '__main__':
     BuildIniFile(windowsConfigs, 'Windows_Configs', configFilePath, freshStart=True)
 
     # Parse through the user's .kys file for premiere commands
-    retCode, keybinds = ParseKeybindsFromKysFile(args.premiereKeybindFile)
+    retCode, keybinds = ParseKeybindsFromKysFile(args.premiereKeybindFile, args.debug)
     
     # If we didn't run into an issue above, build the configuration file so AutoHotKey
     # can understand the inputs from the user
@@ -231,5 +260,9 @@ if __name__ == '__main__':
     else:
         print('Failed')
         # Find some way to display this information to the user other than print
+    return retCode
 
-    sys.exit(retCode)
+# Main Function
+if __name__ == '__main__':
+    rc = Main(sys.argv[1:])
+    sys.exit(rc)

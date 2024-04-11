@@ -6,15 +6,14 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 #MaxHotkeysPerInterval, 2000
 #WinActivateForce
 
-; Required External Scripts
-#Include %A_ScriptDir%\Essential_Functions.ahk
-
 /*
  * DESCRIPTION:
+ *
+ * This script holds the functions for the Premiere Pro with AHK Project related to Audio
+ * User hotkeys will call functions in this script, no user input will be taken here
  */
 
 ; Global Variables
-global CONFIG_FILEPATH := "PremiereWithAHKConfig.ini"
 global POPULATED_AUDIO_GLOBALS := False
 
 ; Required Custom Keybinds for Script Functions
@@ -242,7 +241,7 @@ audioMonoMaker(track)
     else if (DISPLAY_SCALING_VALUE == 100)
     {
         ;TODO: FIGURE THIS OUT
-        MsgBox, Taran did not provide 100% scaling information, test this yourself
+        MsgBox, Taran did not provide 100 percent scaling information, test this yourself
         Return False ; Failed
     }
     else

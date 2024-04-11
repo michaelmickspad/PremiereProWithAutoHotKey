@@ -9,9 +9,9 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 /*
  * DESCRIPTION:
  *
- * CURRENTLY UNUSED - STILL BEING BUILT
+ * CURRENTLY UNUSED - STILL BEING BUILT AND MAY EVENTUALLY DISCARD
  *
- * This is a setup script for the select parts of the script where it's functionally
+ * This is a setup for the select parts of the script where it's functionally
  * impossible to determine where on the screen certain items are since they can be
  * anywhere based on how the user has their computer set up
  *
@@ -104,7 +104,7 @@ waitForNextInput(xVarName, yVarName)
 {
     ; This is a TERRIBLE solution, but fuck it, it works and I'm mad enough to not
     ; exactly care
-    ; I REALLY wanted to have all configuration in python, and all automation in AHK
+    ; I REALLY wanted to have all configuration in python, and all automation in AHK,
     ; but the inclusion of screen based pixel values destroyed any chance of that
     ; There ARE ways to be able to do this exact setup in python, but they require
     ; additional packages, and I'm trying my hardest to make this work easily for

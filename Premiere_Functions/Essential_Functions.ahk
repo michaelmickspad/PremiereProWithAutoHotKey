@@ -10,14 +10,13 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
  * DESCRIPTION:
  * 
  * This script holds the essential functions for the Premiere Pro with AutoHotKey project
- * User functions will call functions in this script, no user input will be taken here
+ * User hotkeys will call functions in this script, no user input will be taken here
  *
  * More niche functions will be stored in a different script, these are the primary
  * essential functions that are most likely to be used
  */
 
 ; Global Variables
-global CONFIG_FILEPATH := "%A_WorkingDir%\..\config\PremiereWithAHKConfig.ini"
 global POPULATED_ESSENTIAL_GLOBALS := False
 global DISPLAY_SCALING_VALUE := -1
 
@@ -39,8 +38,10 @@ global CREATE_MARKER         := "DEFAULT"
 debugTest()
 {
     ; This function is a dumping ground for making sure stuff works
-    
-    IniRead, debugTestCmd, %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.set.marker
+    ;populateEssentialGlobals()
+    IniRead, debugTestCmd, %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.transport.shuttle.stop
+    ;MsgBox % TOP_DIR
+    MsgBox % CONFIG_FILEPATH
     MsgBox % debugTestCmd
     ;SendInput, %debugTestCmd%
 } ; end of debugTest()
@@ -171,8 +172,8 @@ searchForEffect(effectName := "lol", callingFromPreset := False)
 
         if (foundCaret == False)
         {
-            ; This is how Taran had it, but it's REALLY bad, find a way to improve it
-            ; so it doesn't just leave the user stranded
+            ; I don't love the fact that this leaves the user stranded basically, but I
+            ; can't think of many ways to completely fix it
             errorMsg1 := "FAILED TO FIND SEARCH BOX CARET"
             errorMsg2 += "`nIf your cursor will not move, please press the preset"
             errorMsg3 += " shortcut button again to remove this tooltip, and refesh"
@@ -343,22 +344,6 @@ preset(effectName)
 } ; end of preset()
 
 
-DrakeynPreset(item)
-{
-    ; This is an alternative to the preset function taken from the following link:
-    ; https://github.com/Drakeyn/AdobeMacros/blob/master/Premiere%20Pro/Functions/ApplyPreset.ahk
-    ; However, while this wasn't written by Taran, there are still a lot of coding issues
-    ; that need to be fixed up in this
-    ; If this proves to be more reliable than the preset() function, then it will replace
-    ; preset() entirely
-    ; Both are still being tested with the new coding setup
-    
-    ; TODO: Implement this functionality
-    ; For the time being, just pass it through to the original preset
-    preset(item)
-} ; end of DrakeynPreset
-
-
 handleDuplicatePresetBug()
 {
     ; To fix the duplicate preset bug, the user has to interact with the effects panel
@@ -429,9 +414,9 @@ prFocus(panel)
     ; If a panel is ALREADY in focus, and you send the shortcut to bring it into focus
     ; again, that panel might then switch to a different sequence in the case of the
     ; timeline or program monitor,, or a different item in the
-    ; case of the Source panel. IT's a nightmare!
+    ; case of the Source panel. It's a nightmare!
 
-    ; Therefore, we must start with a clean slate. For that, I chose the EFFECTS panel.
+    ; Therefore, we must start with a clean slate by switching to the EFFECTS panel.
     ; Sending its focus shortcut multiple times, has no ill effects.
 
     ; Do not run unless the values for the keybinds are populated
@@ -441,9 +426,8 @@ prFocus(panel)
     }
 
     SendInput % FOCUS_EFFECTS
-    ; Bring focus to the effects panel... OR, if any panel had been maximized (using the
-    ; `~ key by default) this will unmaximize that panel, but sadly, that panel will
-    ; still be the one in focus.
+    ; Bring focus to the effects panel... OR, if any panel had been maximized this will
+    ; unmaximize that panel, but sadly, that panel will still be the one in focus.
     ; Note that if the effects panel is ALREADY maximized, then sending the shortcut to
     ; switch to it will NOT un-maximize it.
     Sleep 12 ; Waiting for Premiere to actaully do the above.
@@ -451,8 +435,6 @@ prFocus(panel)
     ; maximized, THIS will now guarantee that the Effects panel is ACTAULLY in focus.
     SendInput % FOCUS_EFFECTS
     sleep 5 ; Waiting for Premiere to actaully do the above.
-    ; The switch case has no option for the effects panel because we currently already
-    ; have it opened
 
     Switch [panel]
     {
