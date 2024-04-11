@@ -42,7 +42,7 @@ def ParseArguments(inputArguments=None):
         action = 'store_true',
         help = 'Output debug information to the terminal'
     )
-    
+
     try:
         if inputArguments:
             arguments = parser.parse_args(inputArguments)
@@ -82,7 +82,7 @@ def BuildIniFile(settingDict, sectionNameIn, iniFilePath, freshStart=False):
     with open(iniFilePath, 'w') as configFile:
         ahkConfig.write(configFile)
 
-def ParseKeybindsFromKysFile(kysFileIn, debugging = False):
+def ParseKeybindsFromKysFile(kysFileIn, topdirIn, debugging = False):
     '''
     Takes the input of a .kys file exported from Premiere after setting keybindings
     and builds a dictionary of values to that will later be used to build the config
@@ -96,7 +96,7 @@ def ParseKeybindsFromKysFile(kysFileIn, debugging = False):
     keybindDictionary = {}
 
     # Load the data for how Premiere stores keybindings
-    virtualKeys = GetVirtualKeys(debugging)
+    virtualKeys = GetVirtualKeys(topdirIn, debugging)
 
     if not kysFileIn.endswith('.kys'):
         print('ERROR: File must be a .kys file exported from Premiere Pro')
@@ -188,7 +188,7 @@ def SaveUserPremiereKeybind(keybind):
     # TODO: Implement this (or cut it entirely)
     return 0
 
-def GetVirtualKeys(debugging):
+def GetVirtualKeys(topdirIn, debugging):
     '''
     Turns the stored JSON file into an dictionary that's easier to work with in Python
 
@@ -203,10 +203,7 @@ def GetVirtualKeys(debugging):
     think about using pickle until it was already built in JSON and I'm not redoing it.
     '''
     # Get the stored JSON file
-    jsonFile = os.path.abspath(__file__)
-    jsonFile = os.path.dirname(jsonFile) # Setup_Scripts
-    jsonFile = os.path.dirname(jsonFile) # PremiereProWithAutoHotKey
-    jsonFile = os.path.join(jsonFile, 'config')
+    jsonFile = os.path.join(topdirIn, 'config')
     jsonFile = os.path.join(jsonFile, 'virtualkeys.json')
 
     if debugging:
@@ -238,12 +235,26 @@ def Main(inputArgs):
     if args.debug:
         print('DEBUGGING IS ACTIVE')
 
+    # Determine the location of the Top Directory (PremiereProWithAutoHotKey)
+    # Gathering this data differs depending on if this is run as a script or as an exe
+    if getattr(sys, 'frozen', False):
+        # Executable
+        topdir = os.path.dirname(sys.executable)
+    else:
+        # Script
+        topdir = os.path.abspath(__file__)
+        topdir = os.path.dirname(topdir) # Setup_Scripts
+        topdir = os.path.dirname(topdir) # Top Dir / PremiereProWithAutoHotKey
+    
+    if args.debug:
+        print('DEBUG: Top dir is {}'.format(topdir))
+    
     # Determine the location of the configuration file
-    configFilePath = os.path.abspath(__file__)
-    configFilePath = os.path.dirname(configFilePath)
-    configFilePath = os.path.dirname(configFilePath) # PremiereProWithAutoHotKey
-    configFilePath = os.path.join(configFilePath, 'config')
+    configFilePath = os.path.join(topdir, 'config')
     configFilePath = os.path.join(configFilePath, 'PremiereWithAHKConfig.ini')
+
+    if args.debug:
+        print('DEBUG: Config File Path is {}'.format(configFilePath))
 
     # Load the data from the input arguments for windows configurations
     windowsConfigs = {}
@@ -251,7 +262,7 @@ def Main(inputArgs):
     BuildIniFile(windowsConfigs, 'Windows_Configs', configFilePath, freshStart=True)
 
     # Parse through the user's .kys file for premiere commands
-    retCode, keybinds = ParseKeybindsFromKysFile(args.premiereKeybindFile, args.debug)
+    retCode, keybinds = ParseKeybindsFromKysFile(args.premiereKeybindFile, topdir, args.debug)
     
     # If we didn't run into an issue above, build the configuration file so AutoHotKey
     # can understand the inputs from the user

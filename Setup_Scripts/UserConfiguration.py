@@ -9,8 +9,10 @@ from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 import os
 import sys
-import ConfigBuilder
 import ctypes
+
+# Non-system imports
+import ConfigBuilder
 
 def AskUserQuestions():
     '''
@@ -18,6 +20,10 @@ def AskUserQuestions():
     '''
     # Values determined through questioning
     userAnswers = {}
+
+    #TODO: Add in an extra question to see if the user even has custom keybaord shortcuts
+    # and if they don't, use the pre-set default keybinds that will probably be in the
+    # config directory
 
     msg = 'Welcome to the Premiere Pro AutoHotKey Automation Tool Configurator\n' \
         + 'This project was built by Michael Mickspad with heavy inspiration and code ' \
@@ -160,7 +166,7 @@ def BuildConfig(configOptionsIn):
         retCode = 1
     
     if retCode == 0:
-        print('You should now see a shiny new config file in your output directory')
+        print('You should now see a shiny new .ini file in your config directory')
     else:
         print('There was an error with parsing the following file:\n')
         print(configOptionsIn['Premiere Keyfile'])

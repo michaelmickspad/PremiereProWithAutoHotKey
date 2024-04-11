@@ -8,5 +8,9 @@ config/userPremiereKeybinds.json
 config/GeneratedHotKeys.ahk
 
 # Don't track placeholder files for development
-Setup.exe.txt
 Taran_Files_To_Compare
+BuildTheSetupExe.ps1
+
+# Don't track Pyinstaller extra bits
+Setup_Scripts/Setup.spec
+Setup_Scripts/build/
