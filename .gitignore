@@ -10,7 +10,3 @@ config/userPremiereKeybinds.json
 # Don't track placeholder files for development
 Setup.exe.txt
 Taran_Files_To_Compare
-
-# Once this gets added to the github in it's basic form, add it to the gitignore
-# it needs to be an empty file that users have, but any updates beyond that are by updating the template file
-#config/GeneratedHotKeys.ahk

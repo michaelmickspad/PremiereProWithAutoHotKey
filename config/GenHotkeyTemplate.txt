@@ -1,0 +1,19 @@
+﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+; #Warn  ; Enable warnings to assist with detecting common errors.
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
+#SingleInstance force ; Only one version of this script may run at a time
+#MaxHotkeysPerInterval, 2000
+#WinActivateForce
+
+; Function Scripts
+#Include %A_ScriptDir%\Premiere_Functions\Essential_Functions.ahk
+
+/*
+ * DESCRIPTION:
+ *
+ * Need to update this description, but this is where the user hotkeys are going to
+ * be placed
+ */
+
+[[[INSERT_USER_FUNCTIONS_HERE]]]
