@@ -5,7 +5,7 @@ Setup_Scripts/__pycache__
 config/PremiereWithAHKConfig.ini
 config/userMadeHotkeys.json
 config/userPremiereKeybinds.json
-#config/GeneratedHotKeys.ahk # Uncomment this after the default file has been added to github
+config/GeneratedHotKeys.ahk
 
 # Don't track placeholder files for development
 Setup.exe.txt
