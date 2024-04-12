@@ -25,6 +25,7 @@ global DISPLAY_SCALING_VALUE := -1
 ; The values for these are stored in the .ini config file, but the reason we store these
 ; as global values is because AHK is an absolute MESS and this helps a lot with
 ; readability in comparison to doing an IniRead command every time these need to be used
+global SELECT                := "DEFAULT"
 global SHUTTLE_STOP          := "DEFAULT"
 global FOCUS_TIMELINE        := "DEFAULT"
 global FOCUS_PROJECT         := "DEFUALT"
@@ -34,6 +35,7 @@ global FOCUS_EFFECT_CONTROLS := "DEFAULT"
 global FOCUS_EFFECTS         := "DEFAULT"
 global SEARCH_BOX            := "DEFAULT"
 global CREATE_MARKER         := "DEFAULT"
+global DESELECT_ALL          := "DEFAULT"
 
 debugTest()
 {
@@ -54,6 +56,7 @@ populateEssentialGlobals()
     ; Outputs to a temporary variable first because ini file reading to global can be
     ; iffy at times
     ; Also all of the keys in the config are the command names in the .kys file
+    IniRead, selectCmd,        %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.tools.01pointer
     IniRead, shuttleStopCmd,   %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.transport.shuttle.stop
     IniRead, focusTimelineCmd, %CONFIG_FILEPATH%, Premiere_Keybinds, uif.window.Timelines
     IniRead, focusProjectCmd,  %CONFIG_FILEPATH%, Premiere_Keybinds, uif.window.Projects
@@ -63,12 +66,14 @@ populateEssentialGlobals()
     IniRead, focusEffectsCmd,  %CONFIG_FILEPATH%, Premiere_Keybinds, uif.window.Effects
     IniRead, searchBoxCmd,     %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.select.find.box
     IniRead, createMarkerCmd,  %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.set.marker
+    IniRead, deselectAllCmd,   %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.deselectall
 
     missingCommandName := ""
 
     ; Added Error Checking
     Switch "ERROR"
     {
+        case selectCmd:         missingCommandName := "Select"
         case shuttleStopCmd:    missingCommandName := "Shuttle Stop"
         case focusTimelineCmd:  missingCommandName := "Focus Timeline"
         case focusProjectCmd:   missingCommandName := "Focus Project"
@@ -78,6 +83,7 @@ populateEssentialGlobals()
         case focusEffectsCmd:   missingCommandName := "Focus Effects"
         case searchBoxCmd:      missingCommandName := "Open Search Box"
         case createMarkerCmd:   missingCommandName := "Create Marker"
+        case deselectAllCmd:    missingCommandName := "Deselect All"
     }
 
     ; If missingCommandName is set, that means the user doesn't have a required shortcut
@@ -97,6 +103,7 @@ populateEssentialGlobals()
     }
 
     ; Everything has been validated, set the global variables
+    SELECT                := selectCmd
     SHUTTLE_STOP          := shuttleStopCmd
     FOCUS_TIMELINE        := focusTimelineCmd
     FOCUS_PROJECT         := focusProjectCmd
@@ -106,6 +113,7 @@ populateEssentialGlobals()
     FOCUS_EFFECTS         := focusEffectsCmd
     SEARCH_BOX            := searchBoxCmd
     CREATE_MARKER         := createMarkerCmd
+    DESELECT_ALL          := deselectAllCmd
 
     ; While it's not a keybind, since we're populating globals, this is where we also
     ; populate the display scaling value
@@ -144,6 +152,10 @@ searchForEffect(effectName := "lol", callingFromPreset := False)
 
     ; Searches for an item in the effects panel, but does not apply the effect to the
     ; clip. To apply an effect to a selected clip, use preset()
+
+    ; A good use case for this on it's own is if you have a bunch of effects with similar
+    ; names and you want to limit what's shown to those effects and manually select from
+    ; there
 
     ; Brings the search bar in the effects panel into focus
     effectsPanelFindBox()
@@ -465,3 +477,19 @@ kbShortcutsFindBox()
     ; the 2017 version of the software
 
 } ; end of kbShortcutsFindBox()
+
+
+deleteSingleClipAtCursor(){
+    ; Allows you to do one button press to delete whatever clip is below the cursor
+    ; This is perfect for removing audio for clips because it will only delete the single
+    ; clip, even if it's linked to another clip
+    prFocus("timeline")
+    ; The following command only works if the timeline is in focus
+    SendInput % DESELECT_ALL
+    SendInput % SELECT
+    ; Deletes the clip
+    Send, {alt down} ; Send is used since it's a key being held down
+    SendInput, {lbutton}
+    Send, {alt up}
+    SendInput, {delete}
+}

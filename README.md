@@ -112,6 +112,9 @@ The following is a list of functions and exaplanations for what they do that are
     * Opens the search box and looks for the specified effect name
     * Since preset() already does this AND adds the effect to your clip, I would recommend using this in situations where you may have multiple functions like "CROP20", "CROP30", "CROP40", etc. and you set a hotkey to search "CROP" to get all of them easily rather than to look for one specific effect, but that's up to you
 
+* deleteSingleClipAtCursor()
+    * Allows with a single button press to delete whatever is currently underneath the cursor, but will NOT delete whatever that clip is linked to (So if you have an audio track under the cursor, it will not delete the corresponding video)
+
 * effectsPanelFindBox()
     * Opens the effects panel and places your cursor inide the search box, allowing you to type in the box instantly
 
