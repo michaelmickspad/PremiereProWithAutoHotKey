@@ -9,10 +9,19 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 /*
  * DESCRIPTION:
  *
- * These functions generally are for covering specific edge cases or may require
- * external software. At the current moment, I have soft plans to implement all of
- * the functions from Taran's scripts if possible, but this is where some of the
- * ones that I can't exactly test, are very obscure, or require precise screenshots
+ * This file is split off from the essential functions because they generally require
+ * more setup than the other scripts. Anything in the essential functions script I feel
+ * confident having everything just error out if the user doesn't have stuff set up, but
+ * for these functions, it's entirely possible that the user just doesn't have certain
+ * things set up.
+ *
+ * These functions also help to cover specific edge cases or sectiuon off functions that
+ * require external software. At the current moment, I have soft plans to implement all
+ * of the functions from Taran's scripts if possible, but this is where some of the more
+ * difficult ones will be stored that still do seem possible.
+ *
+ * This will also contain my own functions that are completely separate from Taran's
+ * scripts
  *
  */
 
@@ -109,4 +118,32 @@ cropClick()
 
     ;TODO: Implement the rest of this function
 
+}
+
+
+ChangeClipColor(clipColor){
+    ; This function allows the user to use the name of the color when setting up their
+    ; hotkeys
+    ;TODO: Update this to run with variables, and also add in a dedicated check function
+    ; that's separate from the other check functions since this is highly specific
+    Switch clipColor {
+        Case "violet": SendInput, ^!+1 
+            return
+        Case "lavender": SendInput, ^!+2 
+            return
+        Case "purple": SendInput, ^!+3 
+            return
+        Case "yellow": SendInput, ^!+4
+            return
+        Case "rose": SendInput, ^!+5 
+            return
+        Case "mango": SendInput, ^!+6
+            return
+        Case "blue": SendInput, ^!+7 
+            return
+        Default: 
+            MsgBox, Check the code because the spelling of the color may be off
+            return
+    }
+    return
 }

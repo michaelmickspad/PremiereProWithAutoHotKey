@@ -19,7 +19,7 @@ If you want an idea of how these functions are used in practice, check out his o
 
 * [Taran's Repository](https://github.com/TaranVH/2nd-keyboard/tree/master)
 * [Taran's Original Tutorials](https://www.youtube.com/watch?v=O6ERELse_QY&list=PLH1gH0v9E3rvSfrVbny6Wswe_68bPu9n1)
-* [My Tutorial (COMING EVENTUALLY, USE THIS README AND REACH OUT IF STUFF IS UNCLEAR)]()
+* [My Tutorial (COMING EVENTUALLY)]()
 
 
 ## Getting Started
@@ -42,8 +42,8 @@ If you want an idea of how these functions are used in practice, check out his o
 
 * Create your configuration file
     * Run "Setup.exe" and follow the on screen instructions to build your config file
-        * This may pop up with a windows defender warning, I don't know why that pops up (I think it may be because I am using part of the Windows API to read the display scaling that's already set, so if that removes the warning, I will change that to be a manual entry in the future, but for now, just click through to ignore the warning)
-        * If you have Python installed and would like to run this in script form, the script to run is "UserConfiguration.py" in the Setup_Scripts folder
+        * This will pop up with a windows defender warning, in order to get rid of that, I need to submit this program to Microsoft to be added to their approved softwares, and as this is just a fun side project, I don't exactly want to do that so... just tell it to run anyway.
+        * If you have Python installed and would like to run this in script form instead of running it via the executable, the script to run is "UserConfiguration.py" in the Setup_Scripts folder
     * Once you run through the questions, you should see the file "PremiereWithAHKConfig.ini" appear inside the "config" folder
         * Do not worry about any of the other files in this folder, many of them are placeholders for future ideas I want to implement
         * If you have ever looked at a .kys file and were curious what the numbers in them corresponded to, "virtualkeys.json" has that information if you are a video editor who has had issues you need to manually adjust within the .kys file
