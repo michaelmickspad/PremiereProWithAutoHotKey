@@ -14,27 +14,26 @@ import ctypes
 # Non-system imports
 import ConfigBuilder
 
-def AskUserQuestions():
+def AskUserQuestions(topdirIn):
     '''
     Main form where the questions are answered
     '''
     # Values determined through questioning
     userAnswers = {}
 
-    #TODO: Add in an extra question to see if the user even has custom keybaord shortcuts
-    # and if they don't, use the pre-set default keybinds that will probably be in the
-    # config directory
-
     msg = 'Welcome to the Premiere Pro AutoHotKey Automation Tool Configurator\n' \
         + 'This project was built by Michael Mickspad with heavy inspiration and code ' \
-        + 'from Taran Van Hemert\n\n'
+        + 'from Taran Van Hemert'
     print(msg)
 
-    prompt = 'Is this your first time running this configurator on this computer? (Y/N): '
-    userAnswers['First Time Setup'] = PromptUserBoolean(prompt)
+    # This is a placeholder question that will be reworked later
+    #prompt = 'Is this your first time running this configurator on this computer? (Y/N): '
+    #userAnswers['First Time Setup'] = PromptUserBoolean(prompt)
 
     # I don't know what ctypes is completely, but this line accurately grabs the display
     # scaling of the main monitor
+    # UPDATE: This may be causing windows defender issues and it might be removed
+    # I'm going to wait until the gui is made to make any full decisions on that
     displayScaling = ctypes.windll.shcore.GetScaleFactorForDevice(0)
     badDisplayMsg = '\nUnfortunately this script only works for values of 100% and 150%' \
                   + ' resolution scaling,\nfuture additions may change this, but for' \
@@ -58,12 +57,20 @@ def AskUserQuestions():
     userAnswers['Display Scaling'] = displayScaling
 
 
-    prompt = 'Please specify your Premiere keyboard shortcuts\n' \
-           + 'This is generally stored in your Documents folder under\n' \
-           + '"Adobe" > "Premiere Pro" > "[VERSION]" > "Profile-[USERNAME]" > "Win"\n' \
-           + 'but this can be different based on if you are using the Creative Cloud.\n' \
-           + 'The file will have a .kys extension\n'
-    userAnswers['Premiere Keyfile'] = PromptUserFileUpload(prompt, 'kys')
+    prompt = 'Do you have any custom keyboard shortcuts in Premiere? (Y/N): '
+    customShortcuts = PromptUserBoolean(prompt)
+
+    if customShortcuts:
+        prompt = 'Please specify your Premiere keyboard shortcuts\n' \
+            + 'This is generally stored in your Documents folder under\n' \
+            + '"Adobe" > "Premiere Pro" > "[VERSION]" > "Profile-[USERNAME]" > "Win"\n' \
+            + 'but this can be different based on if you are using the Creative Cloud.\n' \
+            + 'The file will have a .kys extension\n'
+        userAnswers['Premiere Keyfile'] = PromptUserFileUpload(prompt, 'kys')
+    else:
+        msg = 'Okay, setting your keyboard shortcuts to the Premiere Defaults...\n'
+        defaultKeyfile = os.path.join(topdirIn, 'config', 'Premiere_default_keys.kys')
+        userAnswers['Premiere Keyfile'] = defaultKeyfile
 
     return userAnswers
 
@@ -159,6 +166,7 @@ def BuildConfig(configOptionsIn):
     # The key and value need to be separate
     configInputArgs.append('--displayScaling')
     configInputArgs.append('{}'.format(configOptionsIn['Display Scaling'])) # Stringify
+    #configInputArgs.append('--debug')
 
     try:
         retCode = ConfigBuilder.Main(configInputArgs)
@@ -166,7 +174,7 @@ def BuildConfig(configOptionsIn):
         retCode = 1
     
     if retCode == 0:
-        print('You should now see a shiny new .ini file in your config directory')
+        print('\nYou should now see a shiny new .ini file in your config directory')
     else:
         print('There was an error with parsing the following file:\n')
         print(configOptionsIn['Premiere Keyfile'])
@@ -176,7 +184,18 @@ def BuildConfig(configOptionsIn):
 # Main Function
 if __name__ == '__main__':
 
-    configOptions = AskUserQuestions()
+    # Determine the location of the Top Directory (PremiereProWithAutoHotKey)
+    # Gathering this data differs depending on if this is run as a script or as an exe
+    if getattr(sys, 'frozen', False):
+        # Executable
+        topdir = os.path.dirname(sys.executable)
+    else:
+        # Script
+        topdir = os.path.abspath(__file__)
+        topdir = os.path.dirname(topdir) # Setup_Scripts
+        topdir = os.path.dirname(topdir) # Top Dir / PremiereProWithAutoHotKey
+
+    configOptions = AskUserQuestions(topdir)
     BuildConfig(configOptions)
 
     input("\nPress ENTER To Close...")

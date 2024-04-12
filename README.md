@@ -1,6 +1,7 @@
 # Premiere Pro with AutoHotKey
 
-# THIS PROJECT IS CURRENTLY IN A PRE-ALPHA NON-VIABLE STATE!  PLEASE COME BACK LATER! THIS MESSAGE WILL BE REMOVED WHEN THERE IS A USABLE VERSION OF THE PROJECT
+# WARNING: THIS PROJECT IS CURRENTLY IN AN ALPHA STATE!
+This program will work with basic functionality, but only a selection of the funtions are available (but they are the most important ones), and this will require you to manually write your own hotkeys. There is a template provided for how to do that, but I'm currently working on adding a way to not have to worry about doing that.
 
 ## Overview (Please Read)
 
@@ -32,16 +33,19 @@ If you want an idea of how these functions are used in practice, check out his o
 
 ### Optional Dependencies
 * Python
-    * This is optional because all of the scripts are available for you to run, but the executable is being offered as an alternative if you don't wish to install Python
-    * THE EXECUTABLE IS CURRENTLY NOT AVAILABLE YET, THE SCRIPTS ARE REQUIRED, BUT WORK IS BEING DONE TO PROVIDE AN EXECUTABLE
+    * This is optional because all of the scripts are available for you to run, but the .exe is being offered as an alternative if you don't wish to install Python
 
 ### How to Run This Program
 
+* Downloading This Program
+    * At the top of the GitHub page, click on the drop down button "<> Code" and click "Download ZIP"
+    * Extract the zip into wherever you want to keep the program
+        * The .zip file MUST be extracted, otherwise the setup program will appear as if it's running as intended with no errors, but won't actually do anything in regards to actually setting it up
+
 * Create your configuration file
-    * Ensure that Python is installed on your computer (This step will become optional when an executable can be provided)
-    * (If not using executable and Python is installed) From the "Setup_Scripts" folder Run "UserConfiguration.py" and follow the on screen instructions to build your config file
-        * Do not worry about running any of the other scripts in that folder, many of them are boilerplate for future items to implement, and others will be called by the "UserConfiguration.py" script
-    * (If using executable) Run "Setup.exe" and follow the on screen instructions to build your config file
+    * Run "Setup.exe" and follow the on screen instructions to build your config file
+        * This may pop up with a windows defender warning, I don't know why that pops up (I think it may be because I am using part of the Windows API to read the display scaling that's already set, so if that removes the warning, I will change that to be a manual entry in the future, but for now, just click through to ignore the warning)
+        * If you have Python installed and would like to run this in script form, the script to run is "UserConfiguration.py" in the Setup_Scripts folder
     * Once you run through the questions, you should see the file "PremiereWithAHKConfig.ini" appear inside the "config" folder
         * Do not worry about any of the other files in this folder, many of them are placeholders for future ideas I want to implement
         * If you have ever looked at a .kys file and were curious what the numbers in them corresponded to, "virtualkeys.json" has that information if you are a video editor who has had issues you need to manually adjust within the .kys file
@@ -84,7 +88,7 @@ A list of these keys can be found [here.](https://www.autohotkey.com/docs/v1/Key
 
 If you want a more thorough idea of how to set up your hotkeys, check the file "UserHotkeysEXAMPLE.ahk" in the Example Files folder.
 
-## Essential Functions
+### Essential Functions
 The following is a list of functions and exaplanations for what they do that are contained in the Essential_Functions.ahk script
 
 * preset("EFFECT_NAME")
@@ -115,7 +119,7 @@ The following is a list of functions and exaplanations for what they do that are
     * Stops playing any video and places a marker at the playhead
     * While Premiere technically already has a keyboard shortcut for this, this is more reliable since it forces a stop on the timeline
 
-## Audio Functions
+### Audio Functions
 The following is a list of functions and exaplanations for what they do that are contained in the Audio_Functions.ahk script
 
 * addGain(AMOUNT)
@@ -130,7 +134,7 @@ The following is a list of functions and exaplanations for what they do that are
     * Converts the selected audio clip to Mono
     * Input for track must be "right" or "left", not specifying will default to the left Audio Track
 
-## Extended Functions
+### Extended Functions
 The following is a list of functions and exaplanations for what they do that are contained in the Extended_Functions.ahk script
 
 In order to use the extended functions, additional setup is required to be performed, as of right now, these are a not high priority to fix, but they will be implemented down the line.
@@ -144,7 +148,7 @@ In order to use the extended functions, additional setup is required to be perfo
 * cropClick()
     * CURRENTLY UNFINISHED, DO NOT USE
 
-## Taran Functions
+### Taran Functions
 The Taran_Functions.ahk script contains functions from Taran's original scripts that I wanted to keep included in case anyone got specific use out of them, but as of right now, they are low priority to implement, and if I decide to implement any of them, they will likely move to one of the other scripts.
 
 I would only recommend looking deeper into these functions if you have previous familiarity with AutoHotKey and Premiere, I have done minor formatting adjustments on the functions, but not much work beyond that.
@@ -175,40 +179,9 @@ The best thing to do if you want the newest version of this project when updates
 
 Yes.
 
-## List of Issues That Irked Me With Taran's Code And Caused Me To Make This Project
-Taran, if you're reading this, I am genuinely sorry... I know you are a video editor and not a coder, but these things were issues that made the code so much more diffult to parse and included some very problematic practices
-
-- Use of tabs instead of multiple spaces
-- Use of "goto"
-- Use of "goto" to jump to a line specified by single line function call
-- Use of "goto" to jump to end a function instead of stopping function with "Return"
-- Use of "goto" to break for loops rather than having a boolean flag in a while loop
-- Use of "goto" with a single line function call that starts a single line above a closing brace
-- Use of "goto" to simulate CONDITIONAL RECURSION
-- Using variables before assigning them because AutoHotKey will default them rather than crash
-- Lack of indenting for functions (meaning functions are not collapsible in text editor)
-- Duplicate indenting of if statements
-- Indenting the backets to be in line with the code of the function instead of in line with the function name
-- Inconsistent indenting meaning it was MUCH more difficult to figure out where loops and if statements ended
-- Inconsistent useage of brackets after if statements (sometimes there's brackets, sometimes it's just indents)
-- Comments that go on beyond 200 characters on a single line instead of making them a new line (likely written with word wrapping enabled)
-- Not using variables for user defined keyboard inputs in function, so multiple instances of the same key would need to be changed if user had different Premiere keyboard shortcuts
-- Comments saying "uncomment next line if debugging" (perfectly fine for personal use, but probably not the best thing to hand off to other people if they have no coding experience) 
-- Commented out code with notes that read "No longer in use" left in code instead of cleaning it up
-- Long chains of if-else statements when switch statements would be both easier to read and easier to adjust
-- Manually writing code when functions have already been written to do achieve the same effect (sometimes not replaced, sometimes replaced but with original version commented out and left in code)
-- Numerous instances of dead code with comments saying "Don't use this" that have remained in the code base for 6+ years
-- Temporary lines used for debugging that were left in code commented out and not labeled as such
-- No leading space at the start of comments squishing the wording against the comment tag
-- Notes indicating that strings are not variables
-- Useage of single = for comparison (since AutoHotKey technically allows that for some reason)
-- Useage of global variables for items that can be confined to local scope
-
-In conclusion: See me after class, young man.
-
 ## Acknowledgments
 
-I know it's ironic to put this section immediately after dunking on his code, but seriously, this project would not have been possible without the amazing work done by Taran Van Hemert with his original scripts which were the basis for this entire project.
+This project would not have been possible without the amazing work done by Taran Van Hemert with his original scripts which were the basis for this entire project.
 
 I also would like to thank the following people for being willing to help me through testing the functionality:
-* INSERT_NAME_HERE_WHEN_TESTING_BEGINS (Hopefully Liz)
+* Eight Faye - [Twitter](https://twitter.com/Eight_Faye)
