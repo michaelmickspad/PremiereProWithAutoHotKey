@@ -9,18 +9,16 @@ This is my own version of the Premiere Pro editing help scripts originally creat
 
 Many of his implementations are perfectly fine and functional, but to the average user (or even many power users), sifting through a large amount of code that was primarily written for one person's specific setup can be difficult, and making an easier to use and configure version of what Taran had built is what this project aims to achieve.
 
-The aim of this project is to allow easier automation of certain tasks within the video editing process when using Premiere Pro for people who aren't as willing to deal with manually editing code by including ways to instantly and much more easily configure the automation scripts to work based on the user's specific setup, such as uploading a keybinding file or giving the ability to set hotkeys for presets from a gui rather than directly writing the code.
+This is a project that I hope to work on bit by bit in my spare time rather than be dedicated to this full time so updates may be a little slow, but currently I'm workshopping ideas on how to make the setup process even simpler for other people to use.
 
-However, this aim is a goal that I will be working on bit by bit towards rather than dedicating my life to, so for now, the primary use case is to allow more transparancy and easy adjustments of Taran Van Hemert's original Premiere scripts.
-
-Many of his original functions are re-written to follow better coding standards and practices while also adding in some features that I personally think are useful to make the code more configurable and adaptable.
+Many of Taran's original functions are re-written to follow better coding standards and practices while also adding in some features that I personally think are useful to make the code more configurable and adaptable.
 
 At the current moment, there are no plans to implement his AfterEffects or Photoshop scripts because I am one person coding this as a fun side project and I don't understand how AfterEffects works AT ALL, but never say never.
 
-If you want an idea of how these functions are used in practice, check out his original set of tutorials, and then watch mine to get an idea of how these are used and how to configure it to your own use cases
+If you want an idea of how these functions are used in practice, check out his original set of tutorials. I plan on making my own eventually, but that's going to come once the project is in a fully useable state.
 
 * [Taran's Repository](https://github.com/TaranVH/2nd-keyboard/tree/master)
-* [Taran's Original Tutorials (INSERT LINK)]()
+* [Taran's Original Tutorials](https://www.youtube.com/watch?v=O6ERELse_QY&list=PLH1gH0v9E3rvSfrVbny6Wswe_68bPu9n1)
 * [My Tutorial (COMING EVENTUALLY, USE THIS README AND REACH OUT IF STUFF IS UNCLEAR)]()
 
 
