@@ -23,4 +23,28 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
  * by using that script and only use this file to add your own hotkeys and functions.
  */
 
-;TODO: Add some example hotkeys in here once the GUI is up and running
+^j::
+    ; CTRL + j
+    ; Flips the clip horizontally
+    preset("Flip X")
+Return
+
+Numpad1::
+    ; Face Cam Animation Slide From Left Side
+    preset("FCA Slide From Left Side") 
+Return
+
+Numpad2::
+    ; Bring up the list of co-comm presets that start with tag "CCA"
+    searchForEffect("CCA")
+Return
+
+Numpad3::
+    ; Zooms the video in so that the livestream content field becomes the full screen
+    preset("SH Stream Content")
+Return
+
+XButton1::
+    ; Back button on mouse
+    deleteSingleClipAtCursor()
+Return

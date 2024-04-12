@@ -38,7 +38,7 @@ If you want an idea of how these functions are used in practice, check out his o
 * Downloading This Program
     * At the top of the GitHub page, click on the drop down button "<> Code" and click "Download ZIP"
     * Extract the zip into wherever you want to keep the program
-        * The .zip file MUST be extracted, otherwise the setup program will appear as if it's running as intended with no errors, but won't actually do anything in regards to actually setting it up
+        * The .zip file MUST be extracted, otherwise the setup program will appear as if it's running as intended with no errors, but won't actually do anything in regards to actually setting it up (make a dedicated folder for this program before extracting)
 
 * Create your configuration file
     * Run "Setup.exe" and follow the on screen instructions to build your config file
@@ -53,7 +53,7 @@ If you want an idea of how these functions are used in practice, check out his o
     * There is one hotkey already set in "PremiereProWithAutoHotKey.ahk" which is CTRL + ` (The key to the left of the "1" key on the keyboard), and it's set to close this program. If you would like to remove or change this, please update or remove it from "PremiereProWithAutoHotKey.ahk". It technically doesn't need to be there as you can also close the program by right clicking the icon in the bottom right and closing it from there, but I don't feel comfortable shipping this code without an emergency close hotkey.
 
 * Once you have your hotkeys set up, double click on "PremiereProWithAutoHotKey.ahk" to run the program
-    * You can also create a shortcut to that script and place it anywhere (I highly recommend you do this because removing that script from it's place in the folders will break the program)
+    * You can also create a shortcut to that script so you can launch that program from anywhere
 
 
 ## Setting Hotkeys Overview
@@ -66,8 +66,8 @@ INSERT_HOTKEY_HERE::
     FUNCTION_NAME(FUNCTION_PARAMETERS)
 Return
 ```
-For an actual example, this hotkey is activated with "CTRL + j" and adds an effect called "shakeScreen20" to the clip below the cursor
 
+For an actual example, this hotkey is activated with "CTRL + j" and adds an effect called "shakeScreen20" to the clip below the cursor
 ```autohotkey
 ^j::
     ; CTRL + j - shakeScreen20 Preset
@@ -85,6 +85,8 @@ And when using keys that are not the standard alphanumeric keys (such as the num
 A list of these keys can be found [here.](https://www.autohotkey.com/docs/v1/KeyList.htm)
 
 If you want a more thorough idea of how to set up your hotkeys, check the file "UserHotkeysEXAMPLE.ahk" in the Example Files folder.
+
+## Functions Available to Use
 
 ### Essential Functions
 The following is a list of functions and exaplanations for what they do that are contained in the Essential_Functions.ahk script
