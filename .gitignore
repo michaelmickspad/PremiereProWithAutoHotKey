@@ -10,6 +10,7 @@ config/GeneratedHotKeys.ahk
 # Don't track placeholder files for development
 Taran_Files_To_Compare
 BuildTheSetupExe.ps1
+BuildTheSetupExe.zsh
 
 # Don't track Pyinstaller extra bits
 Setup_Scripts/Setup.spec
