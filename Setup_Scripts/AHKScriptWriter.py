@@ -8,7 +8,14 @@ import sys
 import os
 import json
 
-def WriteTheScript():
+# This list gets used to know when to not write parameters into the code even if the user
+# has specified one in the gui
+ahkFunctionsWithoutParameters = [
+    'effectsPanelFindBox',
+    'deleteSingleClipAtCursor'
+]
+
+def WriteTheScript(topDir):
     '''
     Writes the .ahk file for the user based on the inputs in the scriptFunctions
     dictionary
@@ -18,9 +25,6 @@ def WriteTheScript():
     # script that are meant for setup, and separate functions will be used to add the
     # content where it needs to be added
 
-    topDir = os.path.abspath(__file__)
-    topDir = os.path.dirname(topDir) # Setup_Scripts
-    topDir = os.path.dirname(topDir) # PremiereProWithAutoHotKey
     configDir = os.path.join(topDir, 'config')
     templateFile = os.path.join(configDir, 'GenHotkeyTemplate.txt')
 
@@ -55,22 +59,59 @@ def WriteHotkeys(configDirIn):
         userHotkeys = json.loads(jFile.read())
 
     for hotkey in userHotkeys:
-        hotkeyLine = hotkey['hotkey'] + '::'
-        humanReadableHotkey = TranslateHotkey(hotkey['hotkey'])
-        descLine = '    ; {}\n    ; {}'.format(humanReadableHotkey, hotkey['description'])
-        
-        # The actual function may vary depending on what's in the JSON
-        if "function" in hotkey:
-            funcLine = '    {}("{}")'.format(hotkey['function'], hotkey['parameter'])
-        elif "AHKCmd" in hotkey:
-            funcLine = '    {}'.format(hotkey['AHKCmd'])
-        else:
-            # If there is an error, let the user know that it was happening
-            funcLine = '    MsgBox, There was an error with importing hotkeys from config'
 
+        # Universal Hotkeys are hotkeys that will work outside of Premiere
+        # If the hotkey isn't universal, it needs this tag above it
+        progRestrictionText = "#IfWinActive ahk_exe Adobe Premiere Pro.exe"
+        hotkeyLine = ''
+        if hotkey['ctrl']:
+            hotkeyLine = hotkeyLine + '^'
+        if hotkey['shift']:
+            hotkeyLine = hotkeyLine + '+'
+        if hotkey['alt']:
+            hotkeyLine = hotkeyLine + '!'
+        hotkeyLine = hotkeyLine + hotkey['hotkey']
+        humanReadableHotkey = TranslateHotkey(hotkeyLine)
+        hotkeyLine = hotkeyLine + '::'
+        #descLine = '    ; {}\n    ; {}'.format(humanReadableHotkey, hotkey['description'])
+        descLine = '    ; {}'.format(humanReadableHotkey)
+
+        # The actual function may vary depending on what's in the JSON
+        if hotkey['custom_code']:
+            # This function has custom code, which is saved in a subdirectory inside
+            # of the config directory and denoted by the ID
+            custCodeFile = 'CustomCode{}.txt'.format(hotkey['id'])
+            custCodeFile = os.path.join(configDirIn, 'CustomFunctions', custCodeFile)
+            with open(custCodeFile, 'r') as custCode:
+                custCodeString = custCode.read()
+                custCodeString = custCodeString.strip()
+                custCodeString = custCodeString.split('\n')
+                firstLine = True # Flag that removes the starting newline character
+                funcLines = ''
+                for line in custCodeString:
+                    if firstLine:
+                        firstLine = False
+                        funcLines = '{}    {}'.format(funcLines, line)
+                    else:
+                        funcLines = '{}\n    {}'.format(funcLines, line)
+        elif hotkey['function']:
+            if hotkey['function'] == 'ExitApp':
+                # ExitApp does not need () afterwards since it's a built in ahk command
+                funcLines = '    {}'.format(hotkey['function'])
+                # ExitApp is a universal command, so it can run outside of Premiere
+                progRestrictionText = "#IfWinActive" # Any program
+            elif hotkey['parameter'] and hotkey['function'] not in ahkFunctionsWithoutParameters:
+                funcLines = '    {}("{}")'.format(hotkey['function'], hotkey['parameter'])
+            else:
+                funcLines = '    {}()'.format(hotkey['function'])
+        else:
+            # There was no custom code and no function set
+            funcLines = '    MsgBox, No functionality set for hotkey'
+
+        scriptLinesToAdd.append(progRestrictionText)
         scriptLinesToAdd.append(hotkeyLine)
         scriptLinesToAdd.append(descLine)
-        scriptLinesToAdd.append(funcLine)
+        scriptLinesToAdd.append(funcLines)
         scriptLinesToAdd.append('Return')
         scriptLinesToAdd.append('') # Empty line for better spacing
 

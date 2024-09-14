@@ -27,10 +27,16 @@ def ParseArguments(inputArguments=None):
     parser.add_argument(
         'premiereKeybindFile',
         action = 'store',
-        help = 'Path to the exported premiere keybindings'
+        help = 'Path to the exported Premiere keybindings'
     )
 
     # Optional Arguments
+    parser.add_argument(
+        '--updateKeybindsOnly',
+        action = 'store_true',
+        help = 'Do not rebuild the config file from scratch, only update the stored ' \
+             + 'Premiere keybindings'
+    )
     parser.add_argument(
         '--displayScaling',
         action = 'store',
@@ -180,14 +186,6 @@ def AddParsedKeybindToDictionary(keybindElement, keybindDictionaryIn, virtualKey
 
     return keybindDictionaryIn
 
-def SaveUserPremiereKeybind(keybind):
-    '''
-    Saves the specified keybind to the file userPremiereKeybinds.json so later when the
-    user is specifying their hotkeys for the script, they can be warned of overlap
-    '''
-    # TODO: Implement this (or cut it entirely)
-    return 0
-
 def GetVirtualKeys(topdirIn, debugging):
     '''
     Turns the stored JSON file into an dictionary that's easier to work with in Python
@@ -226,7 +224,7 @@ def GetVirtualKeys(topdirIn, debugging):
 
 def Main(inputArgs):
     '''
-    I hate this so much because I don't like making a main() function when 
+    I don't like making a main() function when 
     if __name__ == '__main__'
     exists, but in this case, I need to make it because it's being imported by other
     scripts and being run as a standalone function
@@ -256,10 +254,17 @@ def Main(inputArgs):
     if args.debug:
         print('DEBUG: Config File Path is {}'.format(configFilePath))
 
-    # Load the data from the input arguments for windows configurations
-    windowsConfigs = {}
-    windowsConfigs["display scaling"] = args.displayScaling
-    BuildIniFile(windowsConfigs, 'Windows_Configs', configFilePath, freshStart=True)
+    if not args.updateKeybindsOnly:
+        # Load the data from the input arguments for windows configurations
+        windowsConfigs = {}
+        windowsConfigs["display scaling"] = args.displayScaling
+        BuildIniFile(windowsConfigs, 'Windows_Configs', configFilePath, freshStart=True)
+    
+    ppwahkConfigs = {}
+    ppwahkConfigs['kysFileLocation'] = args.premiereKeybindFile
+    ppwahkConfigs['yesDeleteKeyframes'] = 0 # Default value that user can change later
+    ppwahkConfigs['hideWelcomePage'] = 1 # Default value that will change as more of the gui is fleshed out
+    BuildIniFile(ppwahkConfigs, 'PPWAHK_Configs', configFilePath, freshStart=False)
 
     # Parse through the user's .kys file for premiere commands
     retCode, keybinds = ParseKeybindsFromKysFile(args.premiereKeybindFile, topdir, args.debug)

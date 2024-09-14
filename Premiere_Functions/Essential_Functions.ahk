@@ -21,21 +21,21 @@ global POPULATED_ESSENTIAL_GLOBALS := False
 global DISPLAY_SCALING_VALUE := -1
 
 ; Required Custom Keybinds for Script Functions
-; Value of "DEFAULT" will be overridden
+; Value of "NOT SET" will be overridden
 ; The values for these are stored in the .ini config file, but the reason we store these
 ; as global values is because AHK is an absolute MESS and this helps a lot with
 ; readability in comparison to doing an IniRead command every time these need to be used
-global SELECT                := "DEFAULT"
-global SHUTTLE_STOP          := "DEFAULT"
-global FOCUS_TIMELINE        := "DEFAULT"
-global FOCUS_PROJECT         := "DEFUALT"
-global FOCUS_SOURCE_MONITOR  := "DEFAULT"
-global FOCUS_PROGRAM_MONITOR := "DEFAULT"
-global FOCUS_EFFECT_CONTROLS := "DEFAULT"
-global FOCUS_EFFECTS         := "DEFAULT"
-global SEARCH_BOX            := "DEFAULT"
-global CREATE_MARKER         := "DEFAULT"
-global DESELECT_ALL          := "DEFAULT"
+global SELECT                := "NOT SET"
+global SHUTTLE_STOP          := "NOT SET"
+global FOCUS_TIMELINE        := "NOT SET"
+global FOCUS_PROJECT         := "NOT SET"
+global FOCUS_SOURCE_MONITOR  := "NOT SET"
+global FOCUS_PROGRAM_MONITOR := "NOT SET"
+global FOCUS_EFFECT_CONTROLS := "NOT SET"
+global FOCUS_EFFECTS         := "NOT SET"
+global SEARCH_BOX            := "NOT SET"
+global CREATE_MARKER         := "NOT SET"
+global DESELECT_ALL          := "NOT SET"
 
 debugTest()
 {
@@ -47,6 +47,33 @@ debugTest()
     MsgBox % debugTestCmd
     ;SendInput, %debugTestCmd%
 } ; end of debugTest()
+
+
+checkAndSendKey(checkKey, command)
+{
+    ; If a user tries to use a function that is unable to be completed because they
+    ; haven't set a keybind in Premiere for a required action, a message should be
+    ; displayed to the user so they can correct the issue
+    ; This is used instead of a bare SendInput command for ANY non-essential command
+
+    ; This function is not used by any of the other functions in this script, but it's
+    ; stored here because all other scripts will rely on this one
+    if (checkKey == "NOT SET")
+    {
+        MsgBox, No Premiere Keyboard shortcut set for %command%
+        return False ; Failed to send the keybind
+    }
+    else
+    {
+        SendInput % checkKey
+        return True ; Sent the checked keybind
+    }
+} ; end of checkAndSendKey()
+
+waitForPopupWindow(windowName)
+{
+    ; TODO: Implement (look into your old projects for how you did this before)
+}
 
 
 populateEssentialGlobals()
@@ -70,7 +97,7 @@ populateEssentialGlobals()
 
     missingCommandName := ""
 
-    ; Added Error Checking
+    ; If a value doesn't exist when being read from a config file, it defaults to "ERROR"
     Switch "ERROR"
     {
         case selectCmd:         missingCommandName := "Select"
@@ -95,7 +122,7 @@ populateEssentialGlobals()
         ; A PERIOD SHOULD NOT BE A CONCATENATION OPERATOR
         errorMsg1 := "ERROR: No command specified for " missingCommandName " Command"
         errorMsg2 := " which is required for functions in this script.`n`nPlease run the"
-        errorMsg3 := " setup script and specify your Premiere Pro keybindings.`n`nPress"
+        errorMsg3 := " setup process and specify your Premiere Pro keybindings.`n`nPress"
         errorMsg4 := " OK to close the automation program."
         errorMsg := errorMsg1 . errorMsg2 . errorMsg3 . errorMsg4
         MsgBox % errorMsg
@@ -479,7 +506,8 @@ kbShortcutsFindBox()
 } ; end of kbShortcutsFindBox()
 
 
-deleteSingleClipAtCursor(){
+deleteSingleClipAtCursor()
+{
     ; Allows you to do one button press to delete whatever clip is below the cursor
     ; This is perfect for removing audio for clips because it will only delete the single
     ; clip, even if it's linked to another clip
@@ -492,4 +520,4 @@ deleteSingleClipAtCursor(){
     SendInput, {lbutton}
     Send, {alt up}
     SendInput, {delete}
-}
+} ; end of deleteSingleClipAtCursor

@@ -9,13 +9,15 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 /*
  * DESCRIPTION:
  *
- * This file is split off from the essential functions because they generally require
- * more setup than the other scripts. Anything in the essential functions script I feel
- * confident having everything just error out if the user doesn't have stuff set up, but
- * for these functions, it's entirely possible that the user just doesn't have certain
- * things set up.
+ * This file is split off from the essential functions because theses ones all contain
+ * optional elements. I feel confident in not allowing the user to use the script at all
+ * unless all the required keybinds are set for each function in the essential functions
+ * list, but for these functions, there is more wiggle room for if the user even has a
+ * keybind set in premiere for the command. (I don't want to block the user from using the
+ * preset function just because they don't have a keybind for changing a clip on the
+ * timeline to be highlighted yellow)
  *
- * These functions also help to cover specific edge cases or sectiuon off functions that
+ * These functions also help to cover specific edge cases or section off functions that
  * require external software. At the current moment, I have soft plans to implement all
  * of the functions from Taran's scripts if possible, but this is where some of the more
  * difficult ones will be stored that still do seem possible.
@@ -23,52 +25,88 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
  * This will also contain my own functions that are completely separate from Taran's
  * scripts
  *
+ * While the global hotkey values are set in a similar way to the essential ones, they
+ * should never be used by "SendInput", and should only be activated by "checkAndSendKey"
+ * which does a check and displays an error message if the user doesn't have the key set
  */
 
 ; Global Variables
 global CONFIG_FILEPATH := "%A_WorkingDir%\..\config\PremiereWithAHKConfig.ini"
 global POPULATED_EXTENDED_GLOBALS := False
 
-; Required Custom Keybinds for Script Functions
-global PLACEHOLDER_REQUIRED_HOTKEY
+; Custom Keybinds for Script Functions (all are optional)
+global TL_CLIP_VIOLET = "NOT SET"
+global TL_CLIP_IRIS = "NOT SET"
+global TL_CLIP_CARIBBEAN = "NOT SET"
+global TL_CLIP_CERULEAN = "NOT SET"
+global TL_CLIP_LAVENDER = "NOT SET"
+global TL_CLIP_FOREST = "NOT SET"
+global TL_CLIP_ROSE = "NOT SET"
+global TL_CLIP_MANGO = "NOT SET"
+global TL_CLIP_PURPLE = "NOT SET"
+global TL_CLIP_BLUE = "NOT SET"
+global TL_CLIP_TEAL = "NOT SET"
+global TL_CLIP_MAGENTA = "NOT SET"
+global TL_CLIP_TAN = "NOT SET"
+global TL_CLIP_GREEN = "NOT SET"
+global TL_CLIP_BROWN = "NOT SET"
+global TL_CLIP_YELLOW = "NOT SET"
+global DIRECT_MANIP_PROG_MON = "NOT SET"
 
 populateExtendedGlobals()
 {
+    ; Before we can populate the globals for this script specifically, we need to make
+    ; sure the essential ones are populated
+    if (POPULATED_ESSENTIAL_GLOBALS == False)
+    {
+        populateEssentialGlobals()
+    }
+
     ; Grabs the data set by the python script from the configuration file and adjusts the
     ; values of the global variables of the script accordingly
     ; Outputs to a temporary variable first because ini file reading to global can be
     ; iffy at times
     ; Also all of the keys in the config are the command names in the .kys file
 
-    IniRead, removeInOutCmd,  %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.clear.inandout
-    ;TODO: Add in the rest of the function
+    IniRead, clipVioletCmd,    %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.0, NOT SET
+    IniRead, clipIrisCmd,      %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.1, NOT SET
+    IniRead, clipCaribbeanCmd, %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.2, NOT SET
+    IniRead, clipCeruleanCmd,  %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.3, NOT SET
+    IniRead, clipLavenderCmd,  %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.4, NOT SET
+    IniRead, clipForestCmd,    %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.5, NOT SET
+    IniRead, clipRoseCmd,      %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.6, NOT SET
+    IniRead, clipMangoCmd,     %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.7, NOT SET
+    IniRead, clipPurpleCmd,    %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.8, NOT SET
+    IniRead, clipBlueCmd,      %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.9, NOT SET
+    IniRead, clipTealCmd,      %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.10, NOT SET
+    IniRead, clipMagentaCmd,   %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.11, NOT SET
+    IniRead, clipTanCmd,       %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.12, NOT SET
+    IniRead, clipGreenCmd,     %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.13, NOT SET
+    IniRead, clipBrownCmd,     %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.14, NOT SET
+    IniRead, clipYellowCmd,    %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.edit.label.15, NOT SET
+    IniRead, actDirManipProgMonCmd, %CONFIG_FILEPATH%, Premiere_Keybinds, cmdPLACEHOLDER, NOT SET
 
-    missingCommandName := ""
 
-    ; Added Error Checking
-    Switch "ERROR"
-    {
-        case removeInOutCmd: missingCommandName := "Remove In and Out Points"
-    }
-
-    ; If missingCommandName is set, that means the user doesn't have a required shortcut
-    ; for this function, and we shouldn't attempt to continue
-    if (missingCommandName != "")
-    {
-        ; I hate some of the janky BS in AutoHotKey
-        ; I just want to concatenate a string! WHY IS THIS SO DIFFICULT?!?!?
-        ; A PERIOD SHOULD NOT BE A CONCATENATION OPERATOR
-        errorMsg1 := "ERROR: No command specified for " missingCommandName " Command"
-        errorMsg2 := " which is required to run this command.`n`nPlease run the setup"
-        errorMsg3 := " script and specify your Premiere Pro keybindings.`n`nPress OK to"
-        errorMsg4 := " close the automation program."
-        errorMsg := errorMsg1 . errorMsg2 . errorMsg3 . errorMsg4
-        MsgBox % errorMsg
-        ExitApp
-    }
-
-    ; Everything has been validated, set the global variables
-    PLACEHOLDER_REQUIRED_HOTKEY := removeInOutCmd
+    ; Set the global variables (again, we do this separately because reading a config file
+    ; directly into a global variable can have some issues, I would NOT be doing it this
+    ; way if setting the globals directly was perfectly viable)
+    TL_CLIP_VIOLET := clipVioletCmd
+    TL_CLIP_IRIS := clipIrisCmd
+    TL_CLIP_CARIBBEAN := clipCaribbeanCmd
+    TL_CLIP_CERULEAN := clipCeruleanCmd
+    TL_CLIP_LAVENDER := clipLavenderCmd
+    TL_CLIP_FOREST := clipForestCmd
+    TL_CLIP_ROSE := clipRoseCmd
+    TL_CLIP_MANGO := clipMangoCmd
+    TL_CLIP_PURPLE := clipPurpleCmd
+    TL_CLIP_BLUE := clipBlueCmd
+    TL_CLIP_TEAL := clipTealCmd
+    TL_CLIP_MAGENTA := clipMagentaCmd
+    TL_CLIP_TAN := clipTanCmd
+    TL_CLIP_GREEN := clipGreenCmd
+    TL_CLIP_BROWN := clipBrownCmd
+    TL_CLIP_YELLOW := clipYellowCmd
+    DIRECT_MANIP_PROG_MON := actDirManipProgMonCmd
 
     POPULATED_EXTENDED_GLOBALS := True
 }
@@ -78,14 +116,7 @@ instantVFX(effectName)
     ;TODO: Implement
 }
 
-clickTransformIcon()
-{
-    ; Marked as Obsolete in the original script, but it is being used in InstantVFX
-    ; TODO: Implement
-}
-
-;TODO: Move this function to another script for ImageSearch based functions since they
-; require a lot more setup than the other functions
+; TODO: REQUIRES IMAGESEARCH FUNCTIONALITY
 cropClick()
 {
     ; WARNING: This function REQUIRES screenshots using imageSearch
@@ -102,7 +133,6 @@ cropClick()
         populateEssentialGlobals()
     }
 
-    ; TODO: Make an AHK Script that adds specific points on the screen to the config file
     CoordMode, Pixel, Screen
     CoordMode, Mouse, Screen
 
@@ -121,29 +151,114 @@ cropClick()
 }
 
 
-ChangeClipColor(clipColor){
+
+changeClipColor(clipColor)
+{
     ; This function allows the user to use the name of the color when setting up their
-    ; hotkeys
-    ;TODO: Update this to run with variables, and also add in a dedicated check function
-    ; that's separate from the other check functions since this is highly specific
+    ; hotkeys rather than a "SendInput" that's hardcoded to their specific shortcut
+
+    if (POPULATED_EXTENDED_GLOBALS == False)
+    {
+        populateExtendedGlobals()
+    }
+
     Switch clipColor {
-        Case "violet": SendInput, ^!+1 
+        Case "violet", "Violet", "VIOLET", "1":
+            changeClipColorConfirm(TL_CLIP_VIOLET, clipColor)
             return
-        Case "lavender": SendInput, ^!+2 
+        Case "iris", "Iris", "IRIS", "2":
+            changeClipColorConfirm(TL_CLIP_IRIS, clipColor)
             return
-        Case "purple": SendInput, ^!+3 
+        Case "caribbean", "Carribbean", "CARRIBBEAN", "3":
+            changeClipColorConfirm(TL_CLIP_CARIBBEAN, clipColor)
             return
-        Case "yellow": SendInput, ^!+4
+        Case "lavender", "Lavender", "LAVENDER", "4":
+            changeClipColorConfirm(TL_CLIP_LAVENDER, clipColor)
             return
-        Case "rose": SendInput, ^!+5 
+        Case "purple", "Purple", "PURPLE", "9":
+            changeClipColorConfirm(TL_CLIP_PURPLE, clipColor)
             return
-        Case "mango": SendInput, ^!+6
+        Case "cerulean", "Cerulean", "CERULEAN", "5":
+            changeClipColorConfirm(TL_CLIP_CERULEAN, clipColor)
             return
-        Case "blue": SendInput, ^!+7 
+        Case "rose", "Rose", "ROSE", "7":
+            changeClipColorConfirm(TL_CLIP_ROSE, clipColor)
+            return
+        Case "mango", "Mango", "MANGO", "8":
+            changeClipColorConfirm(TL_CLIP_MANGO, clipColor)
+            return
+        Case "blue", "Blue", "BLUE", "10":
+            changeClipColorConfirm(TL_CLIP_BLUE, clipColor)
+            return
+        Case "forest", "Forest", "FOREST", "6":
+            changeClipColorConfirm(TL_CLIP_FOREST, clipColor)
+            return
+        Case "teal", "Teal", "TEAL", "11":
+            changeClipColorConfirm(TL_CLIP_TEAL, clipColor)
+            return
+        Case "magenta", "Magenta", "MAGENTA", "12":
+            changeClipColorConfirm(TL_CLIP_MAGENTA, clipColor)
+            return
+        Case "tan", "Tan", "TAN", "13":
+            changeClipColorConfirm(TL_CLIP_TAN, clipColor)
+            return
+        Case "green", "Green", "GREEN", "14":
+            MsgBox, TESTING TESTING
+            changeClipColorConfirm(TL_CLIP_GREEN, clipColor)
+            return
+        Case "brown", "Brown", "BROWN", "15":
+            changeClipColorConfirm(TL_CLIP_BROWN, clipColor)
+            return
+        Case "yellow", "Yellow", "YELLOW", "16":
+            changeClipColorConfirm(TL_CLIP_YELLOW, clipColor)
             return
         Default: 
-            MsgBox, Check the code because the spelling of the color may be off
+            errorMsg1 := "Your spelling may be incorrect for the selected color, please "
+            errorMsg2 := "keep in mind that if you set custom colors, this will not work. "
+            errorMsg3 := "You can make it work by entering the default name of whatever "
+            errorMsg4 := "color you changed or the number (starting with 1) that the color "
+            errorMsg5 := "appears in the Label Color list inside Preferences"
+            errorMsg := errorMsg1 . errorMsg2 . errorMsg3 . errorMsg4 . errorMsg5
+            MsgBox % errorMsg
             return
     }
     return
+}
+
+changeClipColorConfirm(checkKey, clipColor)
+{
+    ; This is a version of checkAndSendKey that is specific to changeClipColor
+    ; as it has a more unique error message to display
+    if (checkKey == "NOT SET")
+    {
+        MsgBox, No Premiere Keyboard shortcut set for changing clip color to %clipColor%
+        return False ; Failed to send the keybind
+    }
+    else
+    {
+        SendInput % checkKey
+        return True ; Sent the keybind
+    }
+}
+
+closeTitler()
+{
+    ; This allows the Titler window to be closed with a keyboard shortcut
+    ; The titler is an older tool within Adobe Premiere Pro that is considered depricated
+    ; but it is engrained into many workflows despite the newer options
+
+    ; TODO: Decide if this should be implemented or not
+}
+
+clickTransformIcon()
+{
+    passCheck := checkAndSendKey(DIRECT_MANIP_PROG_MON, "Activate Direct Manipulation in Program Monitor")
+    if !passCheck
+    {
+        return False ; Failed the check, emergency stop function
+    }
+    Sleep 5
+
+    ; TODO: Implement the rest of this function because it seems useful
+    ; This is based on clickTransformIcon2 in Taran's Script
 }

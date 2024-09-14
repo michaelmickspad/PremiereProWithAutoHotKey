@@ -31,22 +31,27 @@ global CONFIG_FILEPATH := "config\PremiereWithAHKConfig.ini"
 #Include %A_ScriptDir%\Premiere_Functions\Audio_Functions.ahk
 ;#Include %A_ScriptDir%\Premiere_Functions\Taran_Functions.ahk
 
-; Hotkey Scripts
-#Include %A_ScriptDir%\config\GeneratedHotkeys.ahk
-#Include %A_ScriptDir%\UserHotkeys.ahk
-
 ; Checking to make sure that there is a configuration file
 if !FileExist(CONFIG_FILEPATH)
 {
-    MsgBox, Please run the setup script to generate a configuration file before running this one
+    MsgBox, Please run the first time setup process to generate a configuration file
     ExitApp
 }
 
 
-; Hotkey for closing this script
-; (Feel free to change this, but bear in mind that if you update this program, it will
-; switch back to the default value)
-^`::
-    ; CTRL + ` (Left of the "1" key)
-    ExitApp
-Return
+; Some of the "mods" for Premiere Pro need to be run as a separate process so it doesn't
+; interfere with the primary script, but whether or not they run is determined through
+; a toggle flag within the config file
+; WARNING: THESE MODS ARE RUNNING AS A SEPARATE PROCESS AND THEREFORE WILL NOT STOP IF
+; "ExitApp" IS INVOKED (This generally shouldn't be a problem for what these mods do, but
+; it's worth warning about, and this warning should be in the README when it gets updated)
+IniRead, ppModDeleteExistingKeyframes, %CONFIG_FILEPATH%, PPWAHK_Configs, yesDeleteKeyframes, 0
+if (ppModDeleteExistingKeyframes == 1)
+{
+    Run %A_ScriptDir%\Premiere_Functions\PPMOD_YesDeleteExistingKeyframes.ahk
+}
+
+
+; While #Include's TYPICALLY go at the very top of the script, the Hotkey script actually
+; has to be included at the end because setting hotkeys ends the auto-execution section
+#Include %A_ScriptDir%\config\GeneratedHotkeys.ahk

@@ -1,4 +1,8 @@
-﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+﻿; DO NOT MANUALLY EDIT THIS SCRIPT UNLESS YOU KNOW WHAT YOU ARE DOING
+; THIS IS MEANT TO BE ADJUSTED THROUGH AN AUTOMATED PROCESS AND EDITING THIS SCRIPT
+; MANUALLY WILL BREAK THE AUTOMATIC WRITER
+
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 ; #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
@@ -12,8 +16,11 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 /*
  * DESCRIPTION:
  *
- * Need to update this description, but this is where the generated user hotkeys are
- * going to be placed
+ * This script will hold all the user's hotkeys
+ * It is not meant to be written manually, but rather written by the "AHKScriptWriter.py"
+ * python script, which will parse the hotkeys stored in the "userMadeHotkeys.json"
+ * file and convert them into code that can be understood by AutoHotKey
+ *
  */
 
 [[[INSERT_USER_FUNCTIONS_HERE]]]

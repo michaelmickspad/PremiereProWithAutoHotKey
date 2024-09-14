@@ -17,50 +17,38 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 global POPULATED_AUDIO_GLOBALS := False
 
 ; Required Custom Keybinds for Script Functions
-global REMOVE_IN_OUT_POINTS := "DEFAULT"
-global ADJUST_GAIN := "DEFAULT"
-global AUDIO_CHANNELS := "DEFAULT"
+global REMOVE_IN_OUT_POINTS := "NOT SET"
+global ADJUST_GAIN := "NOT SET"
+global AUDIO_CHANNELS := "NOT SET"
+
 
 populateAudioGlobals()
 {
+    ; Before we can populate the globals for this script specifically, we need to make
+    ; sure the essential ones are populated
+    if (POPULATED_ESSENTIAL_GLOBALS == False)
+    {
+        populateEssentialGlobals()
+    }
+
     ; Grabs the data set by the python script from the configuration file and adjusts the
     ; values of the global variables of the script accordingly
     ; Outputs to a temporary variable first because ini file reading to global can be
     ; iffy at times
     ; Also all of the keys in the config are the command names in the .kys file
+    
+    ; These values only need to be set when using audio functions specifically
+    ; if the values are not set, the script will not error out unless the user is trying
+    ; to use an audio function
 
-    IniRead, removeInOutCmd,   %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.clear.inandout
-    IniRead, adjustGainCmd,    %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.clip.audiooptions.gain
-    IniRead, audioChannelsCmd, %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.clip.audiooptions.sourcechannelmappings
-    ;TODO: Add in the rest of the function
+    IniRead, removeInOutCmd,   %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.clear.inandout, NOT SET
+    IniRead, adjustGainCmd,    %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.clip.audiooptions.gain, NOT SET
+    IniRead, audioChannelsCmd, %CONFIG_FILEPATH%, Premiere_Keybinds, cmd.clip.audiooptions.sourcechannelmappings, NOT SET
 
-    missingCommandName := ""
 
-    ; Added Error Checking
-    Switch "ERROR"
-    {
-        case removeInOutCmd: missingCommandName := "Remove In and Out Points"
-        case adjustGainCmd: missingCommandName := "Adjust Clip Gain"
-        case audioChannelsCmd: missingCommandName := "Open Audio Channels"
-    }
-
-    ; If missingCommandName is set, that means the user doesn't have a required shortcut
-    ; for this function, and we shouldn't attempt to continue
-    if (missingCommandName != "")
-    {
-        ; I hate some of the janky BS in AutoHotKey
-        ; I just want to concatenate a string! WHY IS THIS SO DIFFICULT?!?!?
-        ; A PERIOD SHOULD NOT BE A CONCATENATION OPERATOR
-        errorMsg1 := "ERROR: No command specified for " missingCommandName " Command"
-        errorMsg2 := " which is required to run this command.`n`nPlease run the setup"
-        errorMsg3 := " script and specify your Premiere Pro keybindings.`n`nPress OK to"
-        errorMsg4 := " close the automation program."
-        errorMsg := errorMsg1 . errorMsg2 . errorMsg3 . errorMsg4
-        MsgBox % errorMsg
-        ExitApp
-    }
-
-    ; Everything has been validated, set the global variables
+    ; Set the global variables (again, we do this separately because reading a config file
+    ; directly into a global variable can have some issues, I would NOT be doing it this
+    ; way if setting the globals directly was perfectly viable)
     REMOVE_IN_OUT_POINTS := removeInOutCmd
     ADJUST_GAIN := adjustGainCmd
     AUDIO_CHANNELS := audioChannelsCmd
@@ -69,7 +57,7 @@ populateAudioGlobals()
 } ; end of populateAudioGlobals()
 
 
-; INCOMPLETE - DO NOT USE
+; INCOMPLETE - DO NOT USE (This might be Taran specific, not entirely sure)
 insertSFX(leSound)
 {
     ; Checks to make sure that Premiere is active, and if not, does not allow the
@@ -82,10 +70,13 @@ insertSFX(leSound)
     ; Do not run unless the values for the keybinds are populated
     if (POPULATED_AUDIO_GLOBALS == False)
     {
-        populateEssentialGlobals()
+        populateAudioGlobals()
     }
 
     ; Checking to see if the user has the function for keyshower, and if so, runs it
+    ; ooooooh, key show-er, not key shower (like the bathroom thing)
+    ; I was so confused, I think this is a custom thing Taran made for debugging, but
+    ; it's not in the script I'm looking at so it's probably depricated
     if IsFunc("Keyshower")
     {
         func := Func("Keyshower")
@@ -105,7 +96,11 @@ insertSFX(leSound)
     SetKeyDelay, 0
 
     MouseGetPos, xPos, yPos
-    SendInput % REMOVE_IN_OUT_POINTS
+    passCheck := checkAndSendKey(REMOVE_IN_OUT_POINTS, "Remove in and Out Points")
+    if !passCheck
+    {
+        return False ; Failed the check, emergency stop function
+    }
     Sleep 10
     ;TODO: Figure out what source assignment is and then come back here to finish this
 } ; end of insertSFX()
@@ -113,16 +108,21 @@ insertSFX(leSound)
 
 addGain(amount := 7)
 {
+    populateAudioGlobals()
     ; Adds gain to whatever audio clip is currently selected
-    SendInput % ADJUST_GAIN
-    Sleep 5
+    passCheck := checkAndSendKey(ADJUST_GAIN, "Adjust Gain")
+    if !passCheck
+    {
+        return False ; Failed the check, emergency stop function
+    }
+    Sleep 200
     Send % amount
-    Sleep 5
+    Sleep 200
     SendInput, {enter}
 } ; end of addGain()
 
 
-; INCOMPLETE - DO NOT USE
+; INCOMPLETE - DO NOT USE (TEST IT WITH PREMIERE DIRECTLY)
 audioMonoMaker(track)
 {
     ; This function opens the Auto Channels box for the selected track and changed it to
@@ -142,12 +142,6 @@ audioMonoMaker(track)
         Return False ; Failed
     }
 
-    ; Do not run unless the values for the display scaling are populated
-    if (POPULATED_ESSENTIAL_GLOBALS == False)
-    {
-        populateEssentialGlobals()
-    }
-
     ; Do not run unless the values for the audio keybinds are populated
     if (POPULATED_AUDIO_GLOBALS == False)
     {
@@ -162,13 +156,6 @@ audioMonoMaker(track)
     BlockInput, MouseMove
     BlockInput, On
 
-    ; Checking to see if the user has the function for keyshower, and if so, runs it
-    if IsFunc("Keyshower")
-    {
-        func := Func("Keyshower")
-        retCode := func.Call(leSound, "insertSFX")
-    }
-
     addPixels := 0 ; Defaults to left Audio Track
 
     if (track == "right")
@@ -177,7 +164,11 @@ audioMonoMaker(track)
     }
 
     ; Open the Audio Channels
-    SendInput % AUDIO_CHANNELS
+    passCheck := checkAndSendKey(AUDIO_CHANNELS, "Open Audio Channels")
+    if !passCheck
+    {
+        return False ; Failed the check, emergency stop function
+    }
     Sleep 15
 
     MouseGetPos, xPosAudio, yPosAudio

@@ -74,7 +74,6 @@ def AskUserQuestions(topdirIn):
 
     return userAnswers
 
-
 def PromptUserBoolean(prompt):
     '''
     Tasks the user with answering yes or no questions and returns the value of their

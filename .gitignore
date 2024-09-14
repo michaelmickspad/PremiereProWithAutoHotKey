@@ -1,4 +1,5 @@
 Setup_Scripts/__pycache__
+*.spec
 
 # Don't track user's configurations
 # Not everything in the config directory is a user config, some are essential backbone files
